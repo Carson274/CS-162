@@ -1,0 +1,4 @@
+1. The error occurs in ex1.cpp on line 15.
+2. The cause was the fin.
+3. I fixed the fault by making it so that the creation of cars in main is creating the array as part of the garage's member variable.
+4. I did print g.car_arr instead of Car* on line 25 of main.

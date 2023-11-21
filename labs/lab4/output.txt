@@ -1,0 +1,35 @@
+ID: 199822007
+First Name: Josh
+Last Name: Lyman
+Major: Law
+GPA: 2
+ID: 199922004
+First Name: Sam
+Last Name: Seaborn
+Major: Law
+GPA: 3
+ID: 199922006
+First Name: Toby
+Last Name: Ziegler
+Major: Communications
+GPA: 4
+ID: 199922007
+First Name: C.J.
+Last Name: Cregg
+Major: Political_Science
+GPA: 3.62
+ID: 200722013
+First Name: Walter
+Last Name: Bishop
+Major: General_Sciences
+GPA: 3
+ID: 200822013
+First Name: Olivia
+Last Name: Dunham
+Major: Criminal_Justice
+GPA: 3.45
+ID: 200922015
+First Name: Leslie
+Last Name: Knope
+Major: Public_and_Environmental_Affairs
+GPA: 3.22

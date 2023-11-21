@@ -1,0 +1,4 @@
+3
+Harry_Potter 200 2 a1 a2
+CS162 1200 2 Roger Alex
+CS261 2000 3 B2 B2 B3
