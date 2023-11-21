@@ -1,5 +1,34 @@
 CC=g++ -std=c++11 -g
-exe=asm4
+exe_file = run
 
-# Complete the makefile
-# Your code here: 
+all: $(exe_file)
+
+$(exe_file): bats.o cave.o event.o game.o gold.o main.o room.o stalactites.o wumpus.o
+	$(CC) bats.o cave.o event.o game.o gold.o main.o room.o stalactites.o wumpus.o -o $(exe_file)
+
+bats.o: bats.cpp bats.h
+	$(CC) -c bats.cpp
+
+cave.o: cave.cpp cave.h
+	$(CC) -c cave.cpp
+
+event.o: event.cpp event.h
+	$(CC) -c event.cpp
+
+game.o: game.cpp game.h
+	$(CC) -c game.cpp
+
+gold.o: gold.cpp gold.h
+	$(CC) -c gold.cpp
+
+room.o: room.cpp room.h
+	$(CC) -c room.cpp
+
+stalactites.o: stalactites.cpp stalactites.h
+	$(CC) -c stalactites.cpp
+
+wumpus.o: wumpus.cpp wumpus.h
+	$(CC) -c wumpus.cpp
+
+clean:
+	rm -f *.o $(exe_file)

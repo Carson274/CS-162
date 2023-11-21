@@ -21,6 +21,19 @@ Game::~Game(){
 
 }
 
+void Game::get_size(int& w, int& l){
+	//get the size of the board
+	//Your code here:
+	cout << "Game::get_size() is not implemented..." << endl;
+	return;
+}
+
+void Game::get_debug(bool& d){
+	//get the debug mode or not
+	//Your code here:
+	cout << "Game::get_debug() is not implemented..." << endl;
+	return;
+}
 
 void Game::set_up(int l, int w){
 	//set up the game

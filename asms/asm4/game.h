@@ -28,6 +28,10 @@ public:
 	//suggested functions:
 	Game();
 	~Game();
+
+	void get_size(int&, int&); //get the size of the board
+
+	void get_debug(bool&); //get the debug mode or not
 	
 	void set_up(int, int);
 
