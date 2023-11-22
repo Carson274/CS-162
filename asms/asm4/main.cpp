@@ -11,20 +11,19 @@ int main()
 	//set the random seed
 	srand(time(NULL));
 	
-	int wid = 5, len = 5;
-	bool debug = false;
+	int wid = 5, len = 5, hig = 5;
+	bool debug = true;
 	
 	Game g;
 
-	//get two inputs: size of the cave(wid and len)
-	g.get_size(wid, len);
+	//get three inputs: size of the cave(wid, len, and hig)
+	// g.size_prompt(wid, len, hig);
 
-	//get the 3rd input --> debug mode or not
-	g.get_debug(debug);
+	//get the 4th input --> debug mode or not
+	// g.debug_prompt(debug);
 
 	//Play game
-	g.play_game(wid, len, debug);
-
+	g.play_game(wid, len, hig, debug);
 
 	return 0;
 }

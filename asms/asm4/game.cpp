@@ -1,18 +1,12 @@
-#include "game.h"
-#include "gold.h"
-#include "stalactites.h"
-#include "bats.h"
-#include "wumpus.h"
-
 #include <iostream>
+#include "game.h"
 
 using namespace std;
 
 //Game Implementation
 
 Game::Game(){
-	//Game constructor
-	//Your code here:
+	this->debug_view = false;
 }
 
 Game::~Game(){
@@ -21,88 +15,56 @@ Game::~Game(){
 
 }
 
-void Game::get_size(int& w, int& l){
+void Game::set_debug_view(bool d){
+	this->debug_view = d;
+	return;
+}
+bool Game::get_debug_view() const{
+	return this->debug_view;
+}
+
+void Game::size_prompt(int& w, int& l, int& h){
 	//get the size of the board
-	//Your code here:
-	cout << "Game::get_size() is not implemented..." << endl;
+	cout << "Enter cave width (must be between 4 and 50 inclusive): " << endl;
+	cin >> w;
+	cout << "Enter cave length (must be between 4 and 50 inclusive): " << endl;
+	cin >> l;
+	cout << "Enter cave height (must be  at least 1): " << endl;
+	cin >> h;
 	return;
 }
 
-void Game::get_debug(bool& d){
+void Game::debug_prompt(bool& d){
 	//get the debug mode or not
-	//Your code here:
-	cout << "Game::get_debug() is not implemented..." << endl;
+	cout << "Enter debug mode (1-yes, 0-no): " << endl;
+	cin >> d;
 	return;
 }
 
-void Game::set_up(int l, int w){
-	//set up the game
-	this->length = l;
-	this->width = w;
+void Game::set_up(int l, int w, int h, bool b){
 
-	this->num_arrows = 3; 	//start with 3 arrows
+	// set cave dimensions
+	this->cave.set_length(l);
+	this->cave.set_width(w);
+	this->cave.set_height(h);
 
-	// Finish the remaining...
-	//Your code here:
-	
-	// Create the game board: 2D vector of Room objects
+	// set debug mode
+	this->set_debug_view(b);
 
-	// randomly insert events (2 bats, 2 stalactites, 1 wumpus, 1 gold)
-	// into the board
-	
+	// create cave
+	this->cave.setup_cave();
 
+	// place player
+	cout << "Num of arrows: " << this->adventurer.get_num_arrows() << endl;
 }
 
 //Note: you need to modify this function
-void Game::display_game() const{
+void Game::display_game(){
 	cout << endl << endl;
-	cout << "Arrows remaining: " << this->num_arrows << endl;
 	
-	string line = "";
-	for (int i = 0; i < this->width; ++i)
-		line += "-----";
-
-	for (int i = 0; i < this->length; ++i)
-	{
-		cout << line << endl;
-		for (int j = 0; j < this->width; ++j)
-		{
-			//The first char indicates whether there is a player in that room or not
-			//if the room does not have the player, print space " "
-
-			//else, print "*"
-
-			//Fix the following
-			cout << " ";
-			
-
-			//The next two chars indicate the event in the room
-			//if the room does not have an event, print "  ||" (2 spaces + ||)
-			
-			//else, 
-				//if debug_view is true
-					//print the corresponding char of the event
-				//else
-					//print " " (1 space)
-				// print " ||" (1 space + ||)
-
-			//Fix the following...
-			cout << "  ||";
-		}
-		cout << endl;
-	}
-	cout << line << endl;
-
-	//example output (when finished): 
-	// --------------------
-	//  B || G || B ||   ||
-	// --------------------
-	//    || W ||   || S ||
-	// --------------------   
-	//    ||   ||   || S ||
-	// --------------------   
-	// *  ||   ||   ||   ||
-	// --------------------
+	cout << "Arrows remaining: " << this->adventurer.get_num_arrows() << endl;
+	
+	this->cave.print_cave();
 }
 
 bool Game::check_win() const{
@@ -233,32 +195,32 @@ char Game::get_input(){
 }
 
 //Note: you need to modify this function
-void Game::play_game(int w, int l, bool d){
+void Game::play_game(int w, int l, int h, bool b){
 
+	this->set_up(w, l, h, b);
 
-	Game::set_up(w, l);
-	this->debug_view = d;
+	display_game();
 
-	char input, arrow_input;
+	// char input, arrow_input;
 	
-	while (Game::check_win() == false){
-		//print game board
-		Game::display_game();
+	// while (Game::check_win() == false){
+	// 	//print game board
+	// 	
 
-		//display percerts around player's location
-		//Your code here:
+	// 	//display percerts around player's location
+	// 	//Your code here:
 
-		//Player move...
-		//1. get input
-		input = Game::get_input();
+	// 	//Player move...
+	// 	//1. get input
+	// 	input = Game::get_input();
 
-		//2. move player
-		Game::move(input);
+	// 	//2. move player
+	// 	Game::move(input);
 
-		//3. may or may not encounter events
-		//Your code here:
+	// 	//3. may or may not encounter events
+	// 	//Your code here:
 
-	}
+	// }
 	
 	
 	return;

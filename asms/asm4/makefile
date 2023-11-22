@@ -3,8 +3,8 @@ exe_file = run
 
 all: $(exe_file)
 
-$(exe_file): bats.o cave.o event.o game.o gold.o main.o room.o stalactites.o wumpus.o
-	$(CC) bats.o cave.o event.o game.o gold.o main.o room.o stalactites.o wumpus.o -o $(exe_file)
+$(exe_file): bats.o cave.o event.o game.o gold.o main.o room.o stalactites.o wumpus.o adventurer.o
+	$(CC) bats.o cave.o event.o game.o gold.o main.o room.o stalactites.o wumpus.o adventurer.o -o $(exe_file)
 
 bats.o: bats.cpp bats.h
 	$(CC) -c bats.cpp
@@ -29,6 +29,9 @@ stalactites.o: stalactites.cpp stalactites.h
 
 wumpus.o: wumpus.cpp wumpus.h
 	$(CC) -c wumpus.cpp
+
+adventurer.o: adventurer.cpp adventurer.h
+	$(CC) -c adventurer.cpp
 
 clean:
 	rm -f *.o $(exe_file)
