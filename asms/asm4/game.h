@@ -17,6 +17,7 @@ private:
 	bool debug_view;	//debug mode or not
 	Cave cave;
 	Adventurer adventurer;
+	int starting_position[3];
 
 	//feel free to add more variables...
 
@@ -33,11 +34,15 @@ public:
 
 	void debug_prompt(bool&); //get the debug mode or not
 	
+	void randomize_starting_position();
+
+	void set_starting_position(const int, const int, const int);
+
 	void set_up(int, int, int, bool);
 
 	void display_game();
 
-	bool check_win() const;
+	bool check_win();
 
 	char get_dir();
 	void wumpus_move();
@@ -47,6 +52,8 @@ public:
 	void move_down();
 	void move_left();
 	void move_right();
+	void move_up_a_level();
+	void move_down_a_level();
 	void move(char);
 
 	char get_input();

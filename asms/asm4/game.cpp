@@ -3,10 +3,13 @@
 
 using namespace std;
 
-//Game Implementation
-
 Game::Game(){
 	this->debug_view = false;
+	this->cave = Cave();
+	this->adventurer = Adventurer();
+	this->starting_position[0] = 0;
+	this->starting_position[1] = 0;
+	this->starting_position[2] = 0;
 }
 
 Game::~Game(){
@@ -41,6 +44,23 @@ void Game::debug_prompt(bool& d){
 	return;
 }
 
+void Game::set_starting_position(const int x, const int y, const int z){
+	this->starting_position[0] = x;
+	this->starting_position[1] = y;
+	this->starting_position[2] = z;
+	return;
+}
+
+void Game::randomize_starting_position(){
+	int x, y, z;
+	x = rand() % this->cave.get_length();
+	y = rand() % this->cave.get_width();
+	z = rand() % this->cave.get_height();
+	set_starting_position(x,y,z);
+	this->adventurer.set_position(x,y,z);
+	return;
+}
+
 void Game::set_up(int l, int w, int h, bool b){
 
 	// set cave dimensions
@@ -55,7 +75,10 @@ void Game::set_up(int l, int w, int h, bool b){
 	this->cave.setup_cave();
 
 	// place player
-	cout << "Num of arrows: " << this->adventurer.get_num_arrows() << endl;
+	randomize_starting_position();
+
+	// place events
+	this->cave.place_events();
 }
 
 //Note: you need to modify this function
@@ -63,49 +86,76 @@ void Game::display_game(){
 	cout << endl << endl;
 	
 	cout << "Arrows remaining: " << this->adventurer.get_num_arrows() << endl;
-	
-	this->cave.print_cave();
+
+	this->cave.print_cave(this->adventurer.get_position(), this->starting_position, this->debug_view);
 }
 
-bool Game::check_win() const{
+bool Game::check_win() {
 	//check if game over/win
-	//Your code here:
-
-	cout << "Game::check_win() is not implemented..." << endl;
+	if(this->adventurer.get_gold() == true && (this->adventurer.get_position()[0] == this->starting_position[0] && this->adventurer.get_position()[1] == this->starting_position[1] && this->adventurer.get_position()[2] == this->starting_position[2])) {
+		cout << "Congradulations, you win!" << endl;
+		return true;
+	}
 	return false;
 }
 
 void Game::move_up() {
 	//move player up
-	//Your code here:
-
-	cout << "Game::move_up() is not implemented..." << endl;
+	if(this->adventurer.get_position()[0] == 0) {
+		return;
+	} else {
+		this->adventurer.set_position(this->adventurer.get_position()[0] - 1, this->adventurer.get_position()[1], this->adventurer.get_position()[2]);
+	}
 	return;
-
 }
 
 void Game::move_down() {
 	//move player down
-	//Your code here:
-
-	cout << "Game::move_down() is not implemented..." << endl;
+	if(this->adventurer.get_position()[0] == this->cave.get_length() - 1) {
+		return;
+	} else {
+		this->adventurer.set_position(this->adventurer.get_position()[0] + 1, this->adventurer.get_position()[1], this->adventurer.get_position()[2]);
+	}
 	return;
 }
 
 void Game::move_left() {
 	//move player left
-	//Your code here:
-
-	cout << "Game::move_left() is not implemented..." << endl;
+	if(this->adventurer.get_position()[1] == 0) {
+		return;
+	} else {
+		this->adventurer.set_position(this->adventurer.get_position()[0], this->adventurer.get_position()[1] - 1, this->adventurer.get_position()[2]);
+	}
 	return;
-
 }
 
 void Game::move_right() {
 	//move player right
-	//Your code here:
+	if(this->adventurer.get_position()[1] == this->cave.get_width() - 1) {
+		return;
+	} else {
+		this->adventurer.set_position(this->adventurer.get_position()[0], this->adventurer.get_position()[1] + 1, this->adventurer.get_position()[2]);
+	}
+	return;
+}
 
-	cout << "Game::move_right() is not implemented..." << endl;
+void Game::move_up_a_level() {
+	//move player up a level
+	if(this->adventurer.get_position()[2] == this->cave.get_height() - 1) {
+		return;
+	} else {
+		this->adventurer.set_position(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2] + 1);
+	}
+	return;
+}
+
+void Game::move_down_a_level() {
+	//move player down a level
+	if(this->adventurer.get_position()[2] == 0) {
+		return;
+	} else {
+		this->adventurer.set_position(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2] - 1);
+	}
 	return;
 }
 
@@ -169,6 +219,12 @@ void Game::move(char c) {
 		case 'd':
 			Game::move_right();
 			break;
+		case 'u':
+			Game::move_up_a_level();
+			break;
+		case 'j':
+			Game::move_down_a_level();
+			break;
 	}
 }
 
@@ -184,6 +240,8 @@ char Game::get_input(){
 	cout << "A-left" << endl;
 	cout << "S-down" << endl;
 	cout << "D-right" << endl;
+	cout << "U-up a level" << endl;
+	cout << "J-down a level" << endl;
 	cout << "f-fire an arrow" << endl;
 
 	cout << "Enter input: " << endl;
@@ -197,30 +255,33 @@ char Game::get_input(){
 //Note: you need to modify this function
 void Game::play_game(int w, int l, int h, bool b){
 
-	this->set_up(w, l, h, b);
+	set_up(w, l, h, b);
 
-	display_game();
-
-	// char input, arrow_input;
+	int input;
+	bool gold = false;
 	
-	// while (Game::check_win() == false){
-	// 	//print game board
-	// 	
+	while (check_win() == false){
+		// print caves
+		display_game();
+		
+		//display percerts around player's location
+		//Your code here:
+		this->cave.check_for_percepts(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2]);
 
-	// 	//display percerts around player's location
-	// 	//Your code here:
+		//Player move...
+		//1. get input
+		input = get_input();
 
-	// 	//Player move...
-	// 	//1. get input
-	// 	input = Game::get_input();
+		//2. move player
+		move(input);
 
-	// 	//2. move player
-	// 	Game::move(input);
+		//3. may or may not encounter events
+		//Your code here:
+		this->cave.check_for_events(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2], gold);
 
-	// 	//3. may or may not encounter events
-	// 	//Your code here:
-
-	// }
+		//4. if the player has the gold, add it
+		this->adventurer.set_gold(gold);
+	}
 	
 	
 	return;

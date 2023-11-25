@@ -20,7 +20,13 @@ public:
 
     void setup_cave();
 
-    void print_cave();
+    void print_cave(int *, int *, bool);
+
+    void place_events();
+
+    void check_for_percepts(int, int, int);
+
+    void check_for_events(int, int, int, bool&);
 
     void set_length(const int);
     void set_width(const int);

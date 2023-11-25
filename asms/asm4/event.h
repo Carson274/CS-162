@@ -3,26 +3,29 @@
 
 #include <vector>
 #include <iostream>
-#include "gold.h"
-#include "stalactites.h"
-#include "bats.h"
-#include "wumpus.h"
+
 
 using namespace std;
-
-//Event Interface
-//Note: this must be an abstract class!
 
 class Event
 {
 protected:
     string name;
-    string percept;
-    string encounter;
+    string percept_message;
+    string encounter_message;
+    int position[3];
+    char icon;
 public:
 	Event();
     ~Event();
-	
+
+    void set_position(const int, const int, const int);
+    
+    virtual string get_name() = 0;
+    virtual string get_encounter_message() = 0;
+    virtual string get_percept_message() = 0;
+    virtual int* get_position() = 0;
+    virtual char get_icon() = 0;
 };
 
 #endif

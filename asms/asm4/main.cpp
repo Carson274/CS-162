@@ -11,7 +11,7 @@ int main()
 	//set the random seed
 	srand(time(NULL));
 	
-	int wid = 5, len = 5, hig = 5;
+	int wid = 5, len = 5, hig = 3;
 	bool debug = true;
 	
 	Game g;
