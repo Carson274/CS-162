@@ -15,7 +15,7 @@ class Room
 {
 private: 
     Event* event;	//event in the room
-    bool has_player;
+    bool has_adventurer;
     bool emptiness;
 public:
     Room();
@@ -23,10 +23,13 @@ public:
 
     void set_event(Event*);	//set the event in the room
     void set_emptiness(bool);
+    void set_has_adventurer(bool);
+    void set_event_position(const int, const int, const int);
     Event* get_event() const;	//get the event in the room
     bool get_emptiness() const;
     char get_event_icon();
     int* get_event_position();
+    bool get_has_adventurer() const;
 
     void encounter_event(bool &);
 

@@ -17,7 +17,7 @@ class Stalactites : public Event {
         string get_encounter_message() override;
         string get_percept_message() override;
 
-        void encounter();
+        void encounter(bool &);
         void move();
 };
 

@@ -19,11 +19,12 @@ public:
 	Event();
     ~Event();
 
-    void set_position(const int, const int, const int);
+    virtual void set_position(const int, const int, const int) = 0;
     
     virtual string get_name() = 0;
     virtual string get_encounter_message() = 0;
     virtual string get_percept_message() = 0;
+    virtual void encounter(bool &) = 0;
     virtual int* get_position() = 0;
     virtual char get_icon() = 0;
 };

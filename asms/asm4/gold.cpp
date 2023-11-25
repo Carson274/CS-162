@@ -37,3 +37,7 @@ string Gold::get_percept_message() {
 string Gold::get_encounter_message() {
     return this->encounter_message;
 }
+
+void Gold::encounter(bool &b) {
+    b = true;
+}

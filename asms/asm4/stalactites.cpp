@@ -11,7 +11,7 @@ Stalactites::Stalactites() {
     this->position[2] = 0;
     this->icon = 'S';
     this->percept_message = "You hear a faint dripping sound.";
-    this->encounter_message = "You have encountered the Stalactites!";
+    this->encounter_message = "You have encountered the Stalactites! Watch out!";
 }
 
 Stalactites::~Stalactites() {
@@ -36,4 +36,18 @@ string Stalactites::get_percept_message() {
 }
 string Stalactites::get_encounter_message() {
     return this->encounter_message;
+}
+
+void Stalactites::encounter(bool &b) {
+    int random;
+
+    random = rand() % 2;
+
+    if (random == 0) {
+        b = true;
+        cout << "You've managed to dodge a falling stalactite!" << endl;
+    } else {
+        b = false;
+        cout << "You've been impaled!" << endl;
+    }
 }

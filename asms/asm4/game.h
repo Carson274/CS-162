@@ -18,6 +18,7 @@ private:
 	Cave cave;
 	Adventurer adventurer;
 	int starting_position[3];
+	bool wumpus_alive;
 
 	//feel free to add more variables...
 
@@ -29,6 +30,8 @@ public:
 
 	void set_debug_view(const bool);
 	bool get_debug_view() const;
+	void set_wumpus_alive(const bool);
+	bool get_wumpus_alive() const;
 
 	void size_prompt(int&, int&, int&); //get the size of the board
 
@@ -47,6 +50,7 @@ public:
 	char get_dir();
 	void wumpus_move();
 	void fire_arrow();
+	void fire_arrow_backwards();
 
 	void move_up();
 	void move_down();
@@ -55,6 +59,7 @@ public:
 	void move_up_a_level();
 	void move_down_a_level();
 	void move(char);
+	void check_confused(char, int&);
 
 	char get_input();
 

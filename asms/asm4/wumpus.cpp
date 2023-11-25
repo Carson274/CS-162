@@ -6,7 +6,6 @@ using namespace std;
 
 Wumpus::Wumpus() {
     this->name = "Wumpus";
-    this->is_alive = true;
     this->position[0] = 0;
     this->position[1] = 0;
     this->position[2] = 0;
@@ -18,16 +17,10 @@ Wumpus::Wumpus() {
 Wumpus::~Wumpus() {
 }
 
-void Wumpus::set_alive(const bool alive) {
-    this->is_alive = is_alive;
-}
 void Wumpus::set_position(const int x, const int y, const int z) {
     this->position[0] = x;
     this->position[1] = y;
     this->position[2] = z;
-}
-bool Wumpus::get_alive() const {
-    return this->is_alive;
 }
 int* Wumpus::get_position() {
     return this->position;
@@ -43,4 +36,8 @@ string Wumpus::get_percept_message() {
 }
 string Wumpus::get_encounter_message() {
     return this->encounter_message;
+}
+
+void Wumpus::encounter(bool &b) {
+    b = false;
 }

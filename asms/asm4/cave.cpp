@@ -101,6 +101,11 @@ void Cave::print_cave(int *adventurer_pos, int *starting_pos, bool debug_mode) {
 	}
 }
 
+void Cave::place_adventurer(int x, int y, int z) {
+	// place the adventurer in the cave
+	this->rooms[x][y][z].set_has_adventurer(true);
+}
+
 void Cave::place_events() {
 	// place the events in the cave
 	// for each room, 
@@ -110,7 +115,7 @@ void Cave::place_events() {
 			row_idx = rand() % get_length();
 			col_idx = rand() % get_width();
 			hei_idx = rand() % get_height();
-		} while(this->rooms[row_idx][col_idx][hei_idx].get_event() != NULL);
+		} while(this->rooms[row_idx][col_idx][hei_idx].get_event() != NULL || this->rooms[row_idx][col_idx][hei_idx].get_has_adventurer() == true);
 
 		if(i == 0) {
 			this->rooms[row_idx][col_idx][hei_idx].set_event(new Gold());
@@ -122,6 +127,31 @@ void Cave::place_events() {
 			this->rooms[row_idx][col_idx][hei_idx].set_event(new Bats());
 		}
 	}
+}
+
+void Cave::replace_wumpus() {
+	// place the wumpus in the cave
+	int row_idx = -1, col_idx = -1, hei_idx = -1;
+	do {
+		row_idx = rand() % get_length();
+		col_idx = rand() % get_width();
+		hei_idx = rand() % get_height();
+	} while(this->rooms[row_idx][col_idx][hei_idx].get_event() != NULL || this->rooms[row_idx][col_idx][hei_idx].get_has_adventurer() == true);
+
+	// get the wumpus
+	for(int i = 0; i < get_length(); ++i) {
+		for(int j = 0; j < get_width(); ++j) {
+			for(int k = 0; k < get_height(); ++k) {
+				if(this->rooms[i][j][k].get_event() != NULL) {
+					if(this->rooms[i][j][k].get_event_icon() == 'W') {
+						this->rooms[i][j][k].set_event(NULL);
+						this->rooms[row_idx][col_idx][hei_idx].set_event(new Wumpus());
+					}
+				}
+			}
+		}
+	}
+
 }
 
 void Cave::check_for_percepts(int x, int y, int z) {
@@ -147,11 +177,90 @@ void Cave::check_for_percepts(int x, int y, int z) {
 	return;
 }
 
-void Cave::check_for_events(int x, int y, int z, bool &gold) {
+void Cave::check_for_events(int x, int y, int z, bool &gold, bool &player_alive, bool& confused) {
 	// check for event at player's location
 	if(this->rooms[x][y][z].get_event() != NULL) {
-		this->rooms[x][y][z].encounter_event(gold);
+		if(this->rooms[x][y][z].get_event_icon() == 'G') {
+			this->rooms[x][y][z].encounter_event(gold);
+		} else if(this->rooms[x][y][z].get_event_icon() == 'W' || this->rooms[x][y][z].get_event_icon() == 'S') {
+			this->rooms[x][y][z].encounter_event(player_alive);
+		} else if(this->rooms[x][y][z].get_event_icon() == 'B') {
+			this->rooms[x][y][z].encounter_event(confused);
+		}
 	}
+	return;
+}
+
+bool Cave::arrow_path(int current_x, int current_y, int current_z, char direction) {
+	if(direction == 'w') {
+		for(int x = 0; x < 4; ++x){
+			if(current_x - 1 < 0 || x == 3) {
+				cout << "You missed!" << endl;
+				break;
+			} 
+			else {
+				current_x--;
+				if(this->rooms[current_x][current_y][current_z].get_event() != NULL) {
+					if(this->rooms[current_x][current_y][current_z].get_event_icon() == 'W') {
+						cout << "You killed the Wumpus!" << endl;
+						return false;
+					}
+				}
+			}
+		}
+	}
+	else if(direction == 'a') {
+		for(int y = 0; y < 4; ++y){
+			if(current_y - 1 < 0 || y == 3) {
+				cout << "You missed!" << endl;
+				break;
+			} 
+			else {
+				current_y--;
+				if(this->rooms[current_x][current_y][current_z].get_event() != NULL) {
+					if(this->rooms[current_x][current_y][current_z].get_event_icon() == 'W') {
+						cout << "You killed the Wumpus!" << endl;
+						return false;
+					}
+				}
+			}
+		}
+	}
+	else if(direction == 's') {
+		for(int x = 0; x < 4; ++x){
+			if(current_x + 1 > get_length() - 1 || x == 3) {
+				cout << "You missed!" << endl;
+				break;
+			} 
+			else {
+				current_x++;
+				if(this->rooms[current_x][current_y][current_z].get_event() != NULL) {
+					if(this->rooms[current_x][current_y][current_z].get_event_icon() == 'W') {
+						cout << "You killed the Wumpus!" << endl;
+						return false;
+					}
+				}
+			}
+		}
+	}
+	else if(direction == 'd') {
+		for(int y = 0; y < 4; ++y){
+			if(current_y + 1 > get_height() - 1 || y == 3) {
+				cout << "You missed!" << endl;
+				break;
+			} 
+			else {
+				current_y++;
+				if(this->rooms[current_x][current_y][current_z].get_event() != NULL) {
+					if(this->rooms[current_x][current_y][current_z].get_event_icon() == 'W') {
+						cout << "You killed the Wumpus!" << endl;
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
 }
 
 // void Cave::print_cave(){

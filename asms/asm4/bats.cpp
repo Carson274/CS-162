@@ -37,3 +37,7 @@ string Bats::get_percept_message() {
 string Bats::get_encounter_message() {
     return this->encounter_message;
 }
+
+void Bats::encounter(bool &b) {
+    b = true;
+}
