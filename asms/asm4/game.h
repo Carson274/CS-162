@@ -38,7 +38,7 @@ public:
 
 	void set_up(int, int, int, bool);
 
-	void display_game(bool &, bool &, bool &, bool &);
+	void display_game(bool &, bool &, bool &, bool &, bool &);
 
 	bool check_win();
 

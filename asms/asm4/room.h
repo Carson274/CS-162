@@ -8,6 +8,7 @@
 #include "wumpus.h"
 #include "bats.h"
 #include "stalactites.h"
+#include "armor.h"
 
 using namespace std;
 

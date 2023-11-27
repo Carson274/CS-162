@@ -5,6 +5,7 @@
 #include "stalactites.h"
 #include "bats.h"
 #include "wumpus.h"
+#include "armor.h"
 
 using namespace std;
 
@@ -216,7 +217,7 @@ void Cave::print_event(WINDOW *win, int midY, int midX, char icon) {
 	return;
 }
 
-void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode) {
+void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode, bool &armor) {
 	noecho();
 	WINDOW *win = newwin(47, 170, 3, 6);
 	box(win, 0, 0);
@@ -244,7 +245,7 @@ void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool
 		}
 	}
 	//display percerts around player's location
-	check_for_events(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2], gold, player_alive, confused);
+	check_for_events(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2], gold, player_alive, confused, armor);
 	check_for_percepts(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2]);
 	refresh();
 	wrefresh(win);
@@ -260,7 +261,7 @@ void Cave::place_events() {
 	// place the events in the cave
 	// for each room, 
 	int row_idx = -1, col_idx = -1, hei_idx = -1;
-	for(int i = 0; i < 2; ++i){
+	for(int i = 0; i < 3; ++i){
 		do {
 			row_idx = rand() % get_length();
 			col_idx = rand() % get_width();
@@ -271,7 +272,9 @@ void Cave::place_events() {
 			this->rooms[row_idx][col_idx][hei_idx].set_event(new Gold());
 		} else if(i == 1) {
 			this->rooms[row_idx][col_idx][hei_idx].set_event(new Wumpus());
-		} 
+		} else if(i == 2) {
+			this->rooms[row_idx][col_idx][hei_idx].set_event(new Armor());
+		}
 	}
 	for(int i = 0; i < 3; ++i) {
 		for(int j = 0; j < 4; ++j) {
@@ -315,7 +318,7 @@ void Cave::replace_wumpus() {
 
 }
 
-void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &player_alive, bool& confused) {
+void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &player_alive, bool& confused, bool&armor) {
 	// check for event at player's location
 	if(this->rooms[x][y][z].get_event() != NULL) {
 		if(this->rooms[x][y][z].get_event_icon() == 'G') {
@@ -324,6 +327,8 @@ void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &
 			this->rooms[x][y][z].encounter_event(win, player_alive);
 		} else if(this->rooms[x][y][z].get_event_icon() == 'B') {
 			this->rooms[x][y][z].encounter_event(win, confused);
+		} else if(this->rooms[x][y][z].get_event_icon() == 'A') {
+			this->rooms[x][y][z].encounter_event(win, armor);
 		}
 	}
 	return;
