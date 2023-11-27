@@ -45,14 +45,18 @@ void Stalactites::encounter(bool &b) {
 
     if (random == 0) {
         b = true;
-        cout << "You've managed to dodge a falling stalactite!" << endl;
     } else {
         b = false;
-        cout << "You've been impaled!" << endl;
     }
 }
 void Stalactites::display_percept_message(WINDOW *win, int i) {
     noecho();
     mvwprintw(win, 27 + i, 100, "You hear a faint dripping sound.");
+    wrefresh(win);
+}
+
+void Stalactites::display_encounter_message(WINDOW *win) {
+    noecho();
+    mvwprintw(win, 24, 100, "You have encountered the Stalactites!");
     wrefresh(win);
 }

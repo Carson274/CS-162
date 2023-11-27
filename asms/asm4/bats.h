@@ -22,6 +22,7 @@ class Bats : public Event {
         void move();
 
         void display_percept_message(WINDOW *, int);
+        void display_encounter_message(WINDOW *);
 };
 
 #endif

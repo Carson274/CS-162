@@ -31,7 +31,7 @@ public:
     int* get_event_position();
     bool get_has_adventurer() const;
 
-    void encounter_event(bool &);
+    void encounter_event(WINDOW *, bool &);
 
     void play_event_percept(WINDOW *, int);
 

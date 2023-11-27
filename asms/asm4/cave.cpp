@@ -137,7 +137,7 @@ void Cave::display_instructions(bool &arrow_controls, WINDOW *win, int level, in
 		mvwprintw(win, 38, 130, "      a s d           < v >");
 		mvwprintw(win, 40, 130, "        u           up a level");
 		mvwprintw(win, 41, 130, "        j          down a level");
-		mvwprintw(win, 43, 130, "        f          fire arrow");
+		mvwprintw(win, 43, 130, "        f           fire arrow");
 	} else {
 		mvwprintw(win, 35, 130, "           -Fire an Arrow-");
 		mvwprintw(win, 37, 130, "           Pick a Direction");
@@ -178,7 +178,7 @@ void Cave::check_for_percepts(WINDOW *win, int x, int y, int z) {
 	return;
 }
 
-void Cave::print_cave(bool &arrow_controls, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode) {
+void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode) {
 	noecho();
 	WINDOW *win = newwin(47, 170, 3, 6);
 	box(win, 0, 0);
@@ -191,24 +191,22 @@ void Cave::print_cave(bool &arrow_controls, int adventurer_lives, int *adventure
 			box(cell, 0, 0);
 			int midY = getmaxy(cell) / 2;
 			int midX = getmaxx(cell) / 2;
-			if(rooms[j][k][i].get_event() == NULL) {
-				if(adventurer_pos[0] == j && adventurer_pos[1] == k && adventurer_pos[2] == i){
-					mvwprintw(cell, midY, midX, "*");
-				} else if(starting_pos[0] == j && starting_pos[1] == k && starting_pos[2] == i) {
-					mvwprintw(cell, midY, midX, "X");
-				} else {
-					mvwprintw(cell, midY, midX, " ");
-				}
-			} else if (debug_mode) {
+			if(adventurer_pos[0] == j && adventurer_pos[1] == k && adventurer_pos[2] == i){
+				mvwprintw(cell, midY, midX, "*");
+			} else if(starting_pos[0] == j && starting_pos[1] == k && starting_pos[2] == i) {
+				mvwprintw(cell, midY, midX, "X");
+			} else if(rooms[j][k][i].get_event() == NULL) {
+				mvwprintw(cell, midY, midX, " ");
+			} else if(debug_mode) {
 				mvwprintw(cell, midY, midX, "%c", this->rooms[j][k][i].get_event_icon());
-			}
-			else {
+			} else {
 				mvwprintw(cell, midY, midX, " ");
 			}
 			delwin(cell); // delete the cell window
 		}
 	}
 	//display percerts around player's location
+	check_for_events(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2], gold, player_alive, confused);
 	check_for_percepts(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2]);
 	refresh();
 	wrefresh(win);
@@ -224,7 +222,7 @@ void Cave::place_events() {
 	// place the events in the cave
 	// for each room, 
 	int row_idx = -1, col_idx = -1, hei_idx = -1;
-	for(int i = 0; i < 6; ++i){
+	for(int i = 0; i < 2; ++i){
 		do {
 			row_idx = rand() % get_length();
 			col_idx = rand() % get_width();
@@ -235,10 +233,21 @@ void Cave::place_events() {
 			this->rooms[row_idx][col_idx][hei_idx].set_event(new Gold());
 		} else if(i == 1) {
 			this->rooms[row_idx][col_idx][hei_idx].set_event(new Wumpus());
-		} else if(i == 2 || i == 3) {
-			this->rooms[row_idx][col_idx][hei_idx].set_event(new Stalactites());
-		} else if(i == 4 || i == 5) {
-			this->rooms[row_idx][col_idx][hei_idx].set_event(new Bats());
+		} 
+	}
+	for(int i = 0; i < 3; ++i) {
+		for(int j = 0; j < 4; ++j) {
+			do {
+				row_idx = rand() % get_length();
+				col_idx = rand() % get_width();
+				hei_idx = i;
+			} while(this->rooms[row_idx][col_idx][hei_idx].get_event() != NULL || this->rooms[row_idx][col_idx][hei_idx].get_has_adventurer() == true);
+			
+			if(j == 0 || j == 1) {
+				this->rooms[row_idx][col_idx][hei_idx].set_event(new Stalactites());
+			} else if(j == 2 || j == 3) {
+				this->rooms[row_idx][col_idx][hei_idx].set_event(new Bats());
+			}
 		}
 	}
 }
@@ -268,15 +277,15 @@ void Cave::replace_wumpus() {
 
 }
 
-void Cave::check_for_events(int x, int y, int z, bool &gold, bool &player_alive, bool& confused) {
+void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &player_alive, bool& confused) {
 	// check for event at player's location
 	if(this->rooms[x][y][z].get_event() != NULL) {
 		if(this->rooms[x][y][z].get_event_icon() == 'G') {
-			this->rooms[x][y][z].encounter_event(gold);
+			this->rooms[x][y][z].encounter_event(win, gold);
 		} else if(this->rooms[x][y][z].get_event_icon() == 'W' || this->rooms[x][y][z].get_event_icon() == 'S') {
-			this->rooms[x][y][z].encounter_event(player_alive);
+			this->rooms[x][y][z].encounter_event(win, player_alive);
 		} else if(this->rooms[x][y][z].get_event_icon() == 'B') {
-			this->rooms[x][y][z].encounter_event(confused);
+			this->rooms[x][y][z].encounter_event(win, confused);
 		}
 	}
 	return;
@@ -293,7 +302,6 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 				current_x--;
 				if(this->rooms[current_x][current_y][current_z].get_event() != NULL) {
 					if(this->rooms[current_x][current_y][current_z].get_event_icon() == 'W') {
-						cout << "You killed the Wumpus!" << endl;
 						return false;
 					}
 				}
@@ -310,7 +318,6 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 				current_y--;
 				if(this->rooms[current_x][current_y][current_z].get_event() != NULL) {
 					if(this->rooms[current_x][current_y][current_z].get_event_icon() == 'W') {
-						cout << "You killed the Wumpus!" << endl;
 						return false;
 					}
 				}
@@ -327,7 +334,6 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 				current_x++;
 				if(this->rooms[current_x][current_y][current_z].get_event() != NULL) {
 					if(this->rooms[current_x][current_y][current_z].get_event_icon() == 'W') {
-						cout << "You killed the Wumpus!" << endl;
 						return false;
 					}
 				}
@@ -344,7 +350,6 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 				current_y++;
 				if(this->rooms[current_x][current_y][current_z].get_event() != NULL) {
 					if(this->rooms[current_x][current_y][current_z].get_event_icon() == 'W') {
-						cout << "You killed the Wumpus!" << endl;
 						return false;
 					}
 				}

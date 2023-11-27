@@ -28,6 +28,7 @@ public:
     virtual int* get_position() = 0;
     virtual char get_icon() = 0;
     virtual void display_percept_message(WINDOW *, int) = 0;
+    virtual void display_encounter_message(WINDOW *) = 0;
 };
 
 #endif

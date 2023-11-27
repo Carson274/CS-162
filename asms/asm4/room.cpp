@@ -42,12 +42,22 @@ bool Room::get_has_adventurer() const {
     return this->has_adventurer;
 }
 
-void Room::encounter_event(bool &b) {
-    cout << this->event->get_encounter_message() << endl;
+void Room::encounter_event(WINDOW *win, bool &b) {
+    noecho();
+    this->event->display_encounter_message(win);
     this->event->encounter(b);
+    if(this->event->get_icon() == 'S') {
+        if(b) {
+            mvwprintw(win, 25, 100, "You've managed to dodge a falling stalactite!");
+        } else{
+            mvwprintw(win, 25, 100, "You've been impaled!");
+        }
+    }
 
     // clear event once it's been triggered
     this->event = NULL;
+    wrefresh(win);
+    return;
 }
 
 void Room::play_event_percept(WINDOW *win, int i) {

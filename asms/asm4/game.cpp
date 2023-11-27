@@ -86,12 +86,12 @@ void Game::set_up(int l, int w, int h, bool b){
 }
 
 //Note: you need to modify this function
-void Game::display_game(bool &arrow_controls){
+void Game::display_game(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused){
 	cout << endl << endl;
 	
 	// cout << "Arrows remaining: " << this->adventurer.get_num_arrows() << endl;
 
-	this->cave.print_cave(arrow_controls, this->adventurer.get_num_lives(), this->adventurer.get_position(), this->starting_position, this->get_debug_view());
+	this->cave.print_cave(arrow_controls, gold, player_alive, confused, this->adventurer.get_num_lives(), this->adventurer.get_position(), this->starting_position, this->get_debug_view());
 }
 
 bool Game::check_win() {
@@ -167,19 +167,19 @@ void Game::move_down_a_level() {
 char Game::get_dir(){
 	//get direction of arrow:
 	char dir;
-	//Note: error checking is needed!! 
-	//Your code here:
-	// cout << "Fire an arrow...." << endl;
-	// cout << "W-up" << endl;
-	// cout << "A-left" << endl;
-	// cout << "S-down" << endl;
-	// cout << "D-right" << endl;
+
 	bool arrow_controls = true;
-	display_game(arrow_controls);
+	bool gold = false;
+	bool player_alive = true;
+	bool confused = false;
+
+	// display game with arrow controls
+	display_game(arrow_controls, gold, player_alive, confused);
 	
 	// cout << "Enter direction: " << endl;
 	noecho();
 	dir = getch();
+	refresh();
 
 	return dir;
 }
@@ -311,7 +311,7 @@ char Game::get_input(){
 	char c;
 	noecho();
 	c = getch();
-	cout << c << endl;
+	refresh();
 	
 	return c;
 }
@@ -398,13 +398,10 @@ void Game::play_game(int w, int l, int h, bool b){
 
 		while (check_win() == false && check_loss(player_alive) == false){
 			// print caves
-			display_game(arrow_controls);
+			display_game(arrow_controls, gold, player_alive, confused);
 
 			// //1. get input and move player
 			check_confused(get_input(), confused_timer);
-			// //3. may or may not encounter events
-			// //Your code here:
-			this->cave.check_for_events(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2], gold, player_alive, confused);
 
 			// //4. if the player has the gold, add it
 			this->adventurer.set_gold(gold);

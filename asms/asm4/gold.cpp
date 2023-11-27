@@ -46,3 +46,10 @@ void Gold::display_percept_message(WINDOW *win, int i) {
     mvwprintw(win, 27 + i, 100, "You see a glimmer nearby.");
     wrefresh(win);
 }
+
+void Gold::display_encounter_message(WINDOW *win) {
+    noecho();
+    mvwprintw(win, 24, 100, "You have encountered the Gold!");
+    mvwprintw(win, 25, 100, "Now find the escape!");
+    wrefresh(win);
+}

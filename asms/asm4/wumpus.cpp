@@ -46,3 +46,9 @@ void Wumpus::display_percept_message(WINDOW *win, int i) {
     mvwprintw(win, 27 + i, 100, "You smell a terrible stench.");
     wrefresh(win);
 }
+void Wumpus::display_encounter_message(WINDOW *win) {
+    noecho();
+    mvwprintw(win, 24, 100, "You have encountered the Wumpus!");
+    mvwprintw(win, 25, 100, "You have lost one life!");
+    wrefresh(win);
+}

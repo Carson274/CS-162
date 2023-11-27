@@ -46,3 +46,10 @@ void Bats::display_percept_message(WINDOW *win, int i) {
     mvwprintw(win, 27 + i, 100, "You hear wings flapping.");
     wrefresh(win);
 }
+
+void Bats::display_encounter_message(WINDOW *win) {
+    noecho();
+    mvwprintw(win, 24, 100, "You have encountered the Bats!");
+    mvwprintw(win, 24, 100, "You are you confused for the next 5 turns!");
+    wrefresh(win);
+}
