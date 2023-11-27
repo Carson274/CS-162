@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ncurses.h>
 #include "game.h"
 
 using namespace std;
@@ -33,14 +34,52 @@ bool Game::get_wumpus_alive() const{
 	return this->wumpus_alive;
 }
 
-void Game::size_prompt(int& w, int& l, int& h){
-	//get the size of the board
-	cout << "Enter cave width (must be between 4 and 50 inclusive): " << endl;
-	cin >> w;
-	cout << "Enter cave length (must be between 4 and 50 inclusive): " << endl;
-	cin >> l;
-	cout << "Enter cave height (must be  at least 1): " << endl;
-	cin >> h;
+void Game::size_prompt(int& w, int& l, int& h, int window_height, int window_width){
+	// //get the size of the board
+	// WINDOW *win = newwin(window_height, window_width, 3, 6);
+	// box(win, 0, 0);
+	// WINDOW *input_win = newwin(3, window_width - 20, window_height / 2, 10);
+	// box(input_win, 0, 0);
+	// refresh();
+	// wrefresh(win);
+	// mvwprintw(input_win,1,1,"Enter cave width (must be between 4 and 50 inclusive): ");
+	// wrefresh(input_win);
+	// w = getch() - '0';
+	// while ((int)w < 4 || (int)w > 50) {
+	// 	mvwprintw(input_win,1,1,"Invalid input. Please enter a value between 4 and 50 inclusive: ");
+	// 	wrefresh(input_win);
+	// 	w = getch() - '0';
+	// }
+
+	// werase(input_win);
+	// box(input_win, 0, 0);
+	// mvwprintw(input_win,1,1,"Enter cave length (must be between 4 and 50 inclusive): ");
+	// wrefresh(input_win);
+	// l = getch() - '0';
+	// while ((int)l < 4 || (int)l > 50) {
+	// 	werase(input_win);
+	// 	box(input_win, 0, 0);
+	// 	mvwprintw(input_win,1,1,"Invalid input. Please enter a value between 4 and 50 inclusive: ");
+	// 	wrefresh(input_win);
+	// 	l = getch() - '0';
+	// }
+	
+	// werase(input_win);
+	// box(input_win, 0, 0);
+	// mvwprintw(input_win,1,1,"Enter cave height (must be at least 1): ");
+	// wrefresh(input_win);
+	// h = getch() - '0';
+	// while ((int)h < 1) {
+	// 	werase(input_win);
+	// 	box(input_win, 0, 0);
+	// 	mvwprintw(input_win,1,1,"Invalid input. Please enter a value greater than or equal to 1: ");
+	// 	wrefresh(input_win);
+	// 	h = getch() - '0';
+	// }
+	// wrefresh(input_win);
+	// delwin(input_win);
+	// delwin(win);
+	// refresh();
 	return;
 }
 
@@ -71,6 +110,12 @@ void Game::randomize_starting_position(){
 
 void Game::set_up(int l, int w, int h, bool b){
 
+	// reset wumpus and adventurer, if applicable
+	set_wumpus_alive(true);
+	this->adventurer.set_num_lives(3);
+	this->adventurer.set_num_arrows(3);
+	this->adventurer.set_gold(false);
+
 	// set cave dimensions
 	this->cave.set_length(l);
 	this->cave.set_width(w);
@@ -90,21 +135,19 @@ void Game::set_up(int l, int w, int h, bool b){
 }
 
 //Note: you need to modify this function
-void Game::display_game(){
+void Game::display_game(bool &arrow_controls){
 	cout << endl << endl;
 	
-	cout << "Arrows remaining: " << this->adventurer.get_num_arrows() << endl;
+	// cout << "Arrows remaining: " << this->adventurer.get_num_arrows() << endl;
 
-	this->cave.print_cave(this->adventurer.get_position(), this->starting_position, this->get_debug_view());
+	this->cave.print_cave(arrow_controls, this->adventurer.get_num_lives(), this->adventurer.get_position(), this->starting_position, this->get_debug_view());
 }
 
 bool Game::check_win() {
 	//check if game over/win
 	if(this->adventurer.get_gold() == true && (this->adventurer.get_position()[0] == this->starting_position[0] && this->adventurer.get_position()[1] == this->starting_position[1] && this->adventurer.get_position()[2] == this->starting_position[2])) {
-		cout << "Congratulations, you win!" << endl;
 		return true;
 	} else if(get_wumpus_alive() == false) {
-		cout << "Congratualtions, you win!" << endl;
 		return true;
 	} 
 	return false;
@@ -175,16 +218,17 @@ char Game::get_dir(){
 	char dir;
 	//Note: error checking is needed!! 
 	//Your code here:
-	cout << "Fire an arrow...." << endl;
-	cout << "W-up" << endl;
-	cout << "A-left" << endl;
-	cout << "S-down" << endl;
-	cout << "D-right" << endl;
+	// cout << "Fire an arrow...." << endl;
+	// cout << "W-up" << endl;
+	// cout << "A-left" << endl;
+	// cout << "S-down" << endl;
+	// cout << "D-right" << endl;
+	bool arrow_controls = true;
+	display_game(arrow_controls);
 	
 
-	cout << "Enter direction: " << endl;
-	cin >> dir;
-	cin.ignore(256, '\n');
+	// cout << "Enter direction: " << endl;
+	dir = getch();
 
 	return dir;
 }
@@ -195,7 +239,6 @@ void Game::wumpus_move(){
 	//How to get 75%? 
 	//Hint: generate a random number from 0-3, if the number is not 0, then move
 	int random = rand() % 4;
-	cout << "Random number: " << random << endl;
 	if(random != 0) {
 		this->cave.replace_wumpus();
 	}
@@ -315,60 +358,114 @@ char Game::get_input(){
 	//Note: error checking is needed!!
 	//Your code here:
 	char c;
-
-	cout << endl << endl << "Player move..." << endl << endl;
-	cout << "W-up" << endl;
-	cout << "A-left" << endl;
-	cout << "S-down" << endl;
-	cout << "D-right" << endl;
-	cout << "U-up a level" << endl;
-	cout << "J-down a level" << endl;
-	cout << "f-fire an arrow" << endl;
-
-	cout << "Enter input: " << endl;
-	cin >> c;
-	cin.ignore(256, '\n');
-
+	c = getch();
+	cout << c << endl;
 	
 	return c;
+}
+
+bool Game::check_loss(bool &player_alive) {
+	if(player_alive == false) {
+		this->adventurer.set_num_lives(this->adventurer.get_num_lives() - 1);
+		player_alive = true;
+	}
+	if(this->adventurer.get_num_lives() == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void Game::game_loss(bool &play_again) {
+	WINDOW *win = newwin(47, 170, 3, 6);
+	box(win, 0, 0);
+	int midY = getmaxy(win) / 2;
+	int midX = getmaxx(win) / 2;
+	mvwprintw(win, midY, midX - 6, "Game Over!");
+	mvwprintw(win, midY + 2, midX - 11, "Play again? (y/n)");
+	wrefresh(win);
+	char c = getch();
+	while(c != 'y' && c != 'n') {
+		mvwprintw(win, midY, midX - 17, "Error! You must enter 'y' or 'n'");
+		mvwprintw(win, midY + 2, midX - 11, "Play again? (y/n)");
+		refresh();
+		wrefresh(win);
+		c = getch();
+	}
+
+	if(c == 'n') {
+		play_again = false;
+	} else {
+		play_again = true;
+	}
+	delwin(win);
+	refresh();
+}
+
+void Game::game_win(bool &play_again) {
+	WINDOW *win = newwin(47, 170, 3, 6);
+	box(win, 0, 0);
+	int midY = getmaxy(win) / 2;
+	int midX = getmaxx(win) / 2;
+	mvwprintw(win, midY, midX - 6, "You Win!");
+	mvwprintw(win, midY + 2, midX - 11, "Play again? (y/n)");
+	wrefresh(win);
+	char c = getch();
+	while(c != 'y' && c != 'n') {
+		mvwprintw(win, midY, midX - 17, "Error! You must enter 'y' or 'n'");
+		mvwprintw(win, midY + 2, midX - 11, "Play again? (y/n)");
+		refresh();
+		wrefresh(win);
+		c = getch();
+	}
+
+	if(c == 'n') {
+		play_again = false;
+	} else {
+		play_again = true;
+	}
+	delwin(win);
+	refresh();
 }
 
 //Note: you need to modify this function
 void Game::play_game(int w, int l, int h, bool b){
 
-	set_up(w, l, h, b);
+	bool play_again = true;
 
-	bool gold = false, player_alive = true, confused = false;
-	int confused_timer = 0;;
+	while(play_again == true) {
 
-	while (check_win() == false){
-		// print caves
-		display_game();
-		
-		//display percerts around player's location
-		//Your code here:
-		this->cave.check_for_percepts(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2]);
+		set_up(w, l, h, b);
 
-		//Player move...
-		//1. get input
-		//2. move player
-		check_confused(get_input(), confused_timer);
+		bool gold = false, player_alive = true, confused = false, arrow_controls = false;
+		int confused_timer = 0;
 
-		//3. may or may not encounter events
-		//Your code here:
-		this->cave.check_for_events(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2], gold, player_alive, confused);
+		while (check_win() == false && check_loss(player_alive) == false){
+			// print caves
+			display_game(arrow_controls);
+			
+			// //display percerts around player's location
+			this->cave.check_for_percepts(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2]);
 
-		//4. if the player has the gold, add it
-		this->adventurer.set_gold(gold);
+			// //1. get input and move player
+			check_confused(get_input(), confused_timer);
+			// //3. may or may not encounter events
+			// //Your code here:
+			this->cave.check_for_events(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2], gold, player_alive, confused);
 
-		//5. check if the player is still alive
-		if(player_alive == false) {
-			cout << "You died!" << endl;
-			return;
+			// //4. if the player has the gold, add it
+			this->adventurer.set_gold(gold);
+
+			// //5. check if the player is confused
+			if(confused) {
+				confused_timer = 5;
+				confused = false;
+			}
 		}
-		if(confused) {
-			confused_timer = 5;
-			confused = false;
+		if(this->adventurer.get_num_lives() == 0) {
+			game_loss(play_again);
+		} else {
+			game_win(play_again);
 		}
 	}
 

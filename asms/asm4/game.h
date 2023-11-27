@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <ncurses.h>
 #include "cave.h"
 #include "adventurer.h"
 
@@ -33,7 +34,7 @@ public:
 	void set_wumpus_alive(const bool);
 	bool get_wumpus_alive() const;
 
-	void size_prompt(int&, int&, int&); //get the size of the board
+	void size_prompt(int&, int&, int&, int, int); //get the size of the board
 
 	void debug_prompt(bool&); //get the debug mode or not
 	
@@ -43,7 +44,7 @@ public:
 
 	void set_up(int, int, int, bool);
 
-	void display_game();
+	void display_game(bool &);
 
 	bool check_win();
 
@@ -62,6 +63,11 @@ public:
 	void check_confused(char, int&);
 
 	char get_input();
+
+	bool check_loss(bool &);
+
+	void game_loss(bool &);
+	void game_win(bool &);
 
 	void play_game(int, int, int, bool);
 

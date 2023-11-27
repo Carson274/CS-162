@@ -1,4 +1,4 @@
-CC=g++ -std=c++11 -g
+CC=g++ -std=c++11 -lncurses -g
 exe_file = run
 
 all: $(exe_file)

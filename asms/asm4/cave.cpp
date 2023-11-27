@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ncurses.h>
 #include "cave.h"
 #include "gold.h"
 #include "stalactites.h"
@@ -69,36 +70,112 @@ int Cave::get_height() const {
 	return this->height;
 }
 
-void Cave::print_cave(int *adventurer_pos, int *starting_pos, bool debug_mode) {
-	// print the cave so far
-	for(int i = 0; i < get_height(); ++i) {
-		cout << "Level " << i + 1 << ": " << endl;
-		cout << "┌---┬---┬---┬---┬---┐" << endl;
-		for(int j = 0; j < get_length(); ++j) {
-			for(int k = 0; k < get_width(); ++k) {
-				cout << "|";
-				if(rooms[j][k][i].get_event() == NULL) {
-					if(adventurer_pos[0] == j && adventurer_pos[1] == k && adventurer_pos[2] == i){
-						cout << " * ";
-					} else if(starting_pos[0] == j && starting_pos[1] == k && starting_pos[2] == i) {
-						cout << " X ";
-					} else {
-						cout << "   ";
-					}
-				} else if (debug_mode) {
-					cout << " " << this->rooms[j][k][i].get_event_icon() << " ";
-				}
-				else {
-					cout << "   ";
-				}
-			}
-			cout << "|" << endl;
-			if(j != get_length() - 1) {
-				cout << "├---┼---┼---┼---┼---┤" << endl;
-			}
-		}
-		cout << "└---┴---┴---┴---┴---┘" << endl;
+void Cave::display_level(WINDOW *win, int level){
+	mvwprintw(win, 4, 94, "______ _     _____  ___________   ");
+	mvwprintw(win, 5, 90, "    |  ___| |   |  _  ||  _  | ___ \\   _");
+	mvwprintw(win, 6, 90, "    | |_  | |   | | | || | | | |_/ /  (_)");
+	mvwprintw(win, 7, 90, "    |  _| | |   | | | || | | |    /   ");
+	mvwprintw(win, 8, 90, "    | |   | |___\\ \\_/ /\\ \\_/ / |\\ \\    _");
+	mvwprintw(win, 9, 90, "    \\_|   \\_____/\\___/  \\___/\\_| \\_|  (_)");
+	if(level == 1) {
+		mvwprintw(win, 4, 140, " __         __  _____ ");
+		mvwprintw(win, 5, 140, "/  |       / / |____ |");
+		mvwprintw(win, 6, 140, "`| |      / /      / /");
+		mvwprintw(win, 7, 140, " | |     / /       \\ \\");
+		mvwprintw(win, 8, 140, "_| |_   / /    .___/ /");
+		mvwprintw(win, 9, 140, "\\___/  /_/     \\____/ ");
+	} else if(level == 2) {
+		mvwprintw(win, 4, 140, " _____       __  _____ ");
+		mvwprintw(win, 5, 140, "/ __  \\     / / |____ |");
+		mvwprintw(win, 6, 140, "`' / /'    / /      / /");
+		mvwprintw(win, 7, 140, "  / /     / /       \\ \\");
+		mvwprintw(win, 8, 140, "./ /___  / /    .___/ /");
+		mvwprintw(win, 9, 140, "\\_____/ /_/     \\____/ ");
+	} else if(level == 3) {
+		mvwprintw(win, 4, 140, " _____       __  _____ ");
+		mvwprintw(win, 5, 140, "|____ |     / / |____ |");
+		mvwprintw(win, 6, 140, "    / /    / /      / /");
+		mvwprintw(win, 7, 140, "    \\ \\   / /       \\ \\");
+		mvwprintw(win, 8, 140, ".___/ /  / /    .___/ /");
+		mvwprintw(win, 9, 140, "\\____/  /_/     \\____/ ");
 	}
+}
+
+void Cave::display_health(WINDOW *win, int num_lives) {
+	if(num_lives == 3) {
+		mvwprintw(win, 12, 94, "  _     _____     _______ ____        _____   _______ ");
+		mvwprintw(win, 13, 94, " | |   |_ _\\ \\   / / ____/ ___|   _  |___ /  / /___ / ");
+		mvwprintw(win, 14, 94, " | |    | | \\ \\ / /|  _| \\___ \\  (_)   |_ \\ / /  |_ \\ ");
+		mvwprintw(win, 15, 94, " | |___ | |  \\ V / | |___ ___) |  _   ___) / /  ___) |");
+		mvwprintw(win, 16, 94, " |_____|___|  \\_/  |_____|____/  (_) |____/_/  |____/ ");
+	} else if(num_lives == 2) {
+		mvwprintw(win, 12, 94, "  _     _____     _______ ____        ____     _______ ");
+		mvwprintw(win, 13, 94, " | |   |_ _\\ \\   / / ____/ ___|   _  |___ \\   / /___ / ");
+		mvwprintw(win, 14, 94, " | |    | | \\ \\ / /|  _| \\___ \\  (_)   __) | / /  |_ \\ ");
+		mvwprintw(win, 15, 94, " | |___ | |  \\ V / | |___ ___) |  _   / __/ / /  ___) |");
+		mvwprintw(win, 16, 94, " |_____|___|  \\_/  |_____|____/  (_) |_____/_/  |____/ ");
+	} else if(num_lives == 1) {
+		mvwprintw(win, 12, 94, "  _     _____     _______ ____        _    _______ ");
+		mvwprintw(win, 13, 94, " | |   |_ _\\ \\   / / ____/ ___|   _  / |  / /___ / ");
+		mvwprintw(win, 14, 94, " | |    | | \\ \\ / /|  _| \\___ \\  (_) | | / /  |_ \\ ");
+		mvwprintw(win, 15, 94, " | |___ | |  \\ V / | |___ ___) |  _  | |/ /  ___) |");
+		mvwprintw(win, 16, 94, " |_____|___|  \\_/  |_____|____/  (_) |_/_/  |____/ ");
+	}
+}
+
+void Cave::display_instructions(bool &arrow_controls, WINDOW *win, int level, int num_lives) {
+	display_level(win, level);
+	display_health(win, num_lives);
+	WINDOW *controls = derwin(win, 12, 40, 34, 128);
+	box(controls, 0, 0);
+	if(arrow_controls == false) {
+		mvwprintw(win, 35, 130, "          -Player Controls-");
+		mvwprintw(win, 37, 130, "        w               ^");
+		mvwprintw(win, 38, 130, "      a s d           < v >");
+		mvwprintw(win, 40, 130, "        u           up a level");
+		mvwprintw(win, 41, 130, "        j          down a level");
+		mvwprintw(win, 43, 130, "        f          fire arrow");
+	} else {
+		mvwprintw(win, 35, 130, "           -Fire an Arrow-");
+		mvwprintw(win, 37, 130, "           Pick a Direction");
+		mvwprintw(win, 40, 130, "        w               ^");
+		mvwprintw(win, 41, 130, "      a s d           < v >");
+	}
+	delwin(controls);
+}
+
+void Cave::print_cave(bool &arrow_controls, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode) {
+	WINDOW *win = newwin(47, 170, 3, 6);
+	box(win, 0, 0);
+	// print the cave so far
+	int i = adventurer_pos[2]; // Current level of the adventurer
+	display_instructions(arrow_controls, win, i + 1, adventurer_lives);
+	for(int j = 0; j < get_length(); ++j) {
+		for(int k = 0; k < get_width(); ++k) {
+			WINDOW *cell = derwin(win, 9, 17, j * 9 + 1, k * 17 + 2);
+			box(cell, 0, 0);
+			int midY = getmaxy(cell) / 2;
+			int midX = getmaxx(cell) / 2;
+			if(rooms[j][k][i].get_event() == NULL) {
+				if(adventurer_pos[0] == j && adventurer_pos[1] == k && adventurer_pos[2] == i){
+					mvwprintw(cell, midY, midX, "*");
+				} else if(starting_pos[0] == j && starting_pos[1] == k && starting_pos[2] == i) {
+					mvwprintw(cell, midY, midX, "X");
+				} else {
+					mvwprintw(cell, midY, midX, " ");
+				}
+			} else if (debug_mode) {
+				mvwprintw(cell, midY, midX, "%c", this->rooms[j][k][i].get_event_icon());
+			}
+			else {
+				mvwprintw(cell, midY, midX, " ");
+			}
+			delwin(cell); // delete the cell window
+		}
+	}
+	refresh();
+	wrefresh(win);
+	delwin(win);
 }
 
 void Cave::place_adventurer(int x, int y, int z) {

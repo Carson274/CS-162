@@ -20,7 +20,13 @@ public:
 
     void setup_cave();
 
-    void print_cave(int *, int *, bool);
+    void display_level(WINDOW *, int);
+
+    void display_health(WINDOW *, int);
+
+    void display_instructions(bool &, WINDOW *, int, int);
+
+    void print_cave(bool &, int, int *, int *, bool);
 
     void place_adventurer(int, int, int);
 

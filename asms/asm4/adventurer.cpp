@@ -5,7 +5,7 @@ using namespace std;
 
 Adventurer::Adventurer() {
 	this->num_arrows = 3;
-	this->num_lives = 1;
+	this->num_lives = 3;
     this->position[0] = 0;
     this->position[1] = 0;
     this->position[2] = 0;

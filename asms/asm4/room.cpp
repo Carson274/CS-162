@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ncurses.h>
 #include "room.h"
 
 using namespace std;
@@ -42,7 +43,6 @@ bool Room::get_has_adventurer() const {
 }
 
 void Room::encounter_event(bool &b) {
-    cout << this->event->get_name() << endl;
     cout << this->event->get_encounter_message() << endl;
     this->event->encounter(b);
 
