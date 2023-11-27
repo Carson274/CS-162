@@ -1,6 +1,7 @@
 #ifndef WUMPUS_H
 #define WUMPUS_H 
 
+#include <ncurses.h>
 #include "event.h"
 
 class Wumpus : public Event {
@@ -19,6 +20,8 @@ class Wumpus : public Event {
 
         void encounter(bool &);
         void move();
+
+        void display_percept_message(WINDOW *, int);
 };
 
 #endif

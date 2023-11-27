@@ -26,6 +26,8 @@ public:
 
     void display_instructions(bool &, WINDOW *, int, int);
 
+    void check_for_percepts(WINDOW *, int, int, int);
+
     void print_cave(bool &, int, int *, int *, bool);
 
     void place_adventurer(int, int, int);
@@ -33,8 +35,6 @@ public:
     void place_events();
 
     void replace_wumpus();
-
-    void check_for_percepts(int, int, int);
 
     void check_for_events(int, int, int, bool&, bool&, bool&);
 

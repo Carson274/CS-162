@@ -33,7 +33,7 @@ public:
 
     void encounter_event(bool &);
 
-    void play_event_percept();
+    void play_event_percept(WINDOW *, int);
 
     bool is_empty();
 };

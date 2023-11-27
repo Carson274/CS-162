@@ -41,3 +41,8 @@ string Gold::get_encounter_message() {
 void Gold::encounter(bool &b) {
     b = true;
 }
+void Gold::display_percept_message(WINDOW *win, int i) {
+    noecho();
+    mvwprintw(win, 27 + i, 100, "You see a glimmer nearby.");
+    wrefresh(win);
+}

@@ -41,3 +41,8 @@ string Bats::get_encounter_message() {
 void Bats::encounter(bool &b) {
     b = true;
 }
+void Bats::display_percept_message(WINDOW *win, int i) {
+    noecho();
+    mvwprintw(win, 27 + i, 100, "You hear wings flapping.");
+    wrefresh(win);
+}

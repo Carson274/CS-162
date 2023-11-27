@@ -51,3 +51,8 @@ void Stalactites::encounter(bool &b) {
         cout << "You've been impaled!" << endl;
     }
 }
+void Stalactites::display_percept_message(WINDOW *win, int i) {
+    noecho();
+    mvwprintw(win, 27 + i, 100, "You hear a faint dripping sound.");
+    wrefresh(win);
+}

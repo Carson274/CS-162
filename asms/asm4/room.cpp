@@ -50,8 +50,8 @@ void Room::encounter_event(bool &b) {
     this->event = NULL;
 }
 
-void Room::play_event_percept() {
-    cout << this->event->get_percept_message() << endl;
+void Room::play_event_percept(WINDOW *win, int i) {
+    this->event->display_percept_message(win, i);
 }
 
 bool Room::is_empty() {

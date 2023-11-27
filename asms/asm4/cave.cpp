@@ -71,6 +71,7 @@ int Cave::get_height() const {
 }
 
 void Cave::display_level(WINDOW *win, int level){
+	noecho();
 	mvwprintw(win, 4, 94, "______ _     _____  ___________   ");
 	mvwprintw(win, 5, 90, "    |  ___| |   |  _  ||  _  | ___ \\   _");
 	mvwprintw(win, 6, 90, "    | |_  | |   | | | || | | | |_/ /  (_)");
@@ -102,6 +103,7 @@ void Cave::display_level(WINDOW *win, int level){
 }
 
 void Cave::display_health(WINDOW *win, int num_lives) {
+	noecho();
 	if(num_lives == 3) {
 		mvwprintw(win, 12, 94, "  _     _____     _______ ____        _____   _______ ");
 		mvwprintw(win, 13, 94, " | |   |_ _\\ \\   / / ____/ ___|   _  |___ /  / /___ / ");
@@ -124,6 +126,7 @@ void Cave::display_health(WINDOW *win, int num_lives) {
 }
 
 void Cave::display_instructions(bool &arrow_controls, WINDOW *win, int level, int num_lives) {
+	noecho();
 	display_level(win, level);
 	display_health(win, num_lives);
 	WINDOW *controls = derwin(win, 12, 40, 34, 128);
@@ -144,7 +147,39 @@ void Cave::display_instructions(bool &arrow_controls, WINDOW *win, int level, in
 	delwin(controls);
 }
 
+void Cave::check_for_percepts(WINDOW *win, int x, int y, int z) {
+	noecho();
+	//check for percepts around player's location
+	int i = 0;
+	if(x > 0 && this->rooms[x - 1][y][z].get_event() != NULL) {
+		this->rooms[x - 1][y][z].play_event_percept(win, i);
+		i++;
+	} 
+	if(x < get_length() - 1 && this->rooms[x + 1][y][z].get_event() != NULL) {
+		this->rooms[x + 1][y][z].play_event_percept(win, i);
+		i++;
+	} 
+	if (y > 0 && this->rooms[x][y - 1][z].get_event() != NULL) {
+		this->rooms[x][y - 1][z].play_event_percept(win, i);
+		i++;
+	} 
+	if(y < get_width() - 1 && this->rooms[x][y + 1][z].get_event() != NULL) {
+		this->rooms[x][y + 1][z].play_event_percept(win, i);
+		i++;
+	} 
+	if(z > 0 && this->rooms[x][y][z - 1].get_event() != NULL) {
+		this->rooms[x][y][z - 1].play_event_percept(win, i);
+		i++;
+	} 
+	if(z < get_height() - 1 && this->rooms[x][y][z + 1].get_event() != NULL) {
+		this->rooms[x][y][z + 1].play_event_percept(win, i);
+		i++;
+	}
+	return;
+}
+
 void Cave::print_cave(bool &arrow_controls, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode) {
+	noecho();
 	WINDOW *win = newwin(47, 170, 3, 6);
 	box(win, 0, 0);
 	// print the cave so far
@@ -173,6 +208,8 @@ void Cave::print_cave(bool &arrow_controls, int adventurer_lives, int *adventure
 			delwin(cell); // delete the cell window
 		}
 	}
+	//display percerts around player's location
+	check_for_percepts(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2]);
 	refresh();
 	wrefresh(win);
 	delwin(win);
@@ -229,29 +266,6 @@ void Cave::replace_wumpus() {
 		}
 	}
 
-}
-
-void Cave::check_for_percepts(int x, int y, int z) {
-	//check for percepts around player's location
-	if(x > 0 && this->rooms[x - 1][y][z].get_event() != NULL) {
-		this->rooms[x - 1][y][z].play_event_percept();
-	} 
-	if(x < get_length() - 1 && this->rooms[x + 1][y][z].get_event() != NULL) {
-		this->rooms[x + 1][y][z].play_event_percept();
-	} 
-	if (y > 0 && this->rooms[x][y - 1][z].get_event() != NULL) {
-		this->rooms[x][y - 1][z].play_event_percept();
-	} 
-	if(y < get_width() - 1 && this->rooms[x][y + 1][z].get_event() != NULL) {
-		this->rooms[x][y + 1][z].play_event_percept();
-	} 
-	if(z > 0 && this->rooms[x][y][z - 1].get_event() != NULL) {
-		this->rooms[x][y][z - 1].play_event_percept();
-	} 
-	if(z < get_height() - 1 && this->rooms[x][y][z + 1].get_event() != NULL) {
-		this->rooms[x][y][z + 1].play_event_percept();
-	}
-	return;
 }
 
 void Cave::check_for_events(int x, int y, int z, bool &gold, bool &player_alive, bool& confused) {
@@ -339,51 +353,3 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 	}
 	return true;
 }
-
-// void Cave::print_cave(){
-//     string line = "";
-// 	for (int i = 0; i < this->width; ++i)
-// 		line += "-----";
-
-// 	for (int i = 0; i < this->length; ++i)
-// 	{
-// 		cout << line << endl;
-// 		for (int j = 0; j < this->width; ++j)
-// 		{
-// 			// The first char indicates whether there is a player in that room or not
-// 			// if the room does not have the player, print space " "
-
-// 			// else, print "*"
-
-// 			// Fix the following
-// 			cout << " ";
-			
-
-// 			// The next two chars indicate the event in the room
-// 			// if the room does not have an event, print "  ||" (2 spaces + ||)
-			
-// 			// else, 
-// 				// if debug_view is true
-// 					// print the corresponding char of the event
-// 				// else
-// 					// print " " (1 space)
-// 				// print " ||" (1 space + ||)
-
-// 			//Fix the following...
-// 			cout << "  ||";
-// 		}
-// 		cout << endl;
-// 	}
-// 	cout << line << endl;
-
-// 	// example output (when finished): 
-// 	// --------------------
-// 	//  B || G || B ||   ||
-// 	// --------------------
-// 	//    || W ||   || S ||
-// 	// --------------------   
-// 	//    ||   ||   || S ||
-// 	// --------------------   
-// 	// *  ||   ||   ||   ||
-// 	// --------------------
-// }

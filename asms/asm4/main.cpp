@@ -6,7 +6,7 @@
 
 using namespace std;
 
-
+// over 15 lines needed to display title
 int main()
 {
 	initscr();
@@ -67,9 +67,6 @@ int main()
 	bool debug = true;
 	
 	Game g;
-
-	//get three inputs: size of the cave(wid, len, and hig)
-	// g.size_prompt(wid, len, hig, window_height, window_width);
 
 	//get the 4th input --> debug mode or not
 	// g.debug_prompt(debug);

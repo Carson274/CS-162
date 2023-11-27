@@ -41,3 +41,8 @@ string Wumpus::get_encounter_message() {
 void Wumpus::encounter(bool &b) {
     b = false;
 }
+void Wumpus::display_percept_message(WINDOW *win, int i) {
+    noecho();
+    mvwprintw(win, 27 + i, 100, "You smell a terrible stench.");
+    wrefresh(win);
+}

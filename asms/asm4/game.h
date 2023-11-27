@@ -14,18 +14,14 @@ class Game
 {
 private:
 
-	//other member variables:
 	bool debug_view;	//debug mode or not
 	Cave cave;
 	Adventurer adventurer;
 	int starting_position[3];
 	bool wumpus_alive;
 
-	//feel free to add more variables...
-
 public:
 
-	//suggested functions:
 	Game();
 	~Game();
 
@@ -33,8 +29,6 @@ public:
 	bool get_debug_view() const;
 	void set_wumpus_alive(const bool);
 	bool get_wumpus_alive() const;
-
-	void size_prompt(int&, int&, int&, int, int); //get the size of the board
 
 	void debug_prompt(bool&); //get the debug mode or not
 	
@@ -70,11 +64,6 @@ public:
 	void game_win(bool &);
 
 	void play_game(int, int, int, bool);
-
-	//feel free (and you will need) to add more functions...
-
-
-
 
 };
 

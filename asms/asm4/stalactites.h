@@ -1,6 +1,7 @@
 #ifndef STALACTITES_H
 #define STALACTITES_H 
 
+#include <ncurses.h>
 #include "event.h"
 
 class Stalactites : public Event {
@@ -19,6 +20,8 @@ class Stalactites : public Event {
 
         void encounter(bool &);
         void move();
+
+        void display_percept_message(WINDOW *, int);
 };
 
 #endif

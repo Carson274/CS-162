@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <iostream>
-
+#include <ncurses.h>
 
 using namespace std;
 
@@ -27,6 +27,7 @@ public:
     virtual void encounter(bool &) = 0;
     virtual int* get_position() = 0;
     virtual char get_icon() = 0;
+    virtual void display_percept_message(WINDOW *, int) = 0;
 };
 
 #endif

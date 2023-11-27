@@ -34,55 +34,6 @@ bool Game::get_wumpus_alive() const{
 	return this->wumpus_alive;
 }
 
-void Game::size_prompt(int& w, int& l, int& h, int window_height, int window_width){
-	// //get the size of the board
-	// WINDOW *win = newwin(window_height, window_width, 3, 6);
-	// box(win, 0, 0);
-	// WINDOW *input_win = newwin(3, window_width - 20, window_height / 2, 10);
-	// box(input_win, 0, 0);
-	// refresh();
-	// wrefresh(win);
-	// mvwprintw(input_win,1,1,"Enter cave width (must be between 4 and 50 inclusive): ");
-	// wrefresh(input_win);
-	// w = getch() - '0';
-	// while ((int)w < 4 || (int)w > 50) {
-	// 	mvwprintw(input_win,1,1,"Invalid input. Please enter a value between 4 and 50 inclusive: ");
-	// 	wrefresh(input_win);
-	// 	w = getch() - '0';
-	// }
-
-	// werase(input_win);
-	// box(input_win, 0, 0);
-	// mvwprintw(input_win,1,1,"Enter cave length (must be between 4 and 50 inclusive): ");
-	// wrefresh(input_win);
-	// l = getch() - '0';
-	// while ((int)l < 4 || (int)l > 50) {
-	// 	werase(input_win);
-	// 	box(input_win, 0, 0);
-	// 	mvwprintw(input_win,1,1,"Invalid input. Please enter a value between 4 and 50 inclusive: ");
-	// 	wrefresh(input_win);
-	// 	l = getch() - '0';
-	// }
-	
-	// werase(input_win);
-	// box(input_win, 0, 0);
-	// mvwprintw(input_win,1,1,"Enter cave height (must be at least 1): ");
-	// wrefresh(input_win);
-	// h = getch() - '0';
-	// while ((int)h < 1) {
-	// 	werase(input_win);
-	// 	box(input_win, 0, 0);
-	// 	mvwprintw(input_win,1,1,"Invalid input. Please enter a value greater than or equal to 1: ");
-	// 	wrefresh(input_win);
-	// 	h = getch() - '0';
-	// }
-	// wrefresh(input_win);
-	// delwin(input_win);
-	// delwin(win);
-	// refresh();
-	return;
-}
-
 void Game::debug_prompt(bool& d){
 	//get the debug mode or not
 	cout << "Enter debug mode (1-yes, 0-no): " << endl;
@@ -226,8 +177,8 @@ char Game::get_dir(){
 	bool arrow_controls = true;
 	display_game(arrow_controls);
 	
-
 	// cout << "Enter direction: " << endl;
+	noecho();
 	dir = getch();
 
 	return dir;
@@ -358,6 +309,7 @@ char Game::get_input(){
 	//Note: error checking is needed!!
 	//Your code here:
 	char c;
+	noecho();
 	c = getch();
 	cout << c << endl;
 	
@@ -377,6 +329,7 @@ bool Game::check_loss(bool &player_alive) {
 }
 
 void Game::game_loss(bool &play_again) {
+	noecho();
 	WINDOW *win = newwin(47, 170, 3, 6);
 	box(win, 0, 0);
 	int midY = getmaxy(win) / 2;
@@ -390,6 +343,7 @@ void Game::game_loss(bool &play_again) {
 		mvwprintw(win, midY + 2, midX - 11, "Play again? (y/n)");
 		refresh();
 		wrefresh(win);
+		noecho();
 		c = getch();
 	}
 
@@ -403,6 +357,7 @@ void Game::game_loss(bool &play_again) {
 }
 
 void Game::game_win(bool &play_again) {
+	noecho();
 	WINDOW *win = newwin(47, 170, 3, 6);
 	box(win, 0, 0);
 	int midY = getmaxy(win) / 2;
@@ -416,6 +371,7 @@ void Game::game_win(bool &play_again) {
 		mvwprintw(win, midY + 2, midX - 11, "Play again? (y/n)");
 		refresh();
 		wrefresh(win);
+		noecho();
 		c = getch();
 	}
 
@@ -443,9 +399,6 @@ void Game::play_game(int w, int l, int h, bool b){
 		while (check_win() == false && check_loss(player_alive) == false){
 			// print caves
 			display_game(arrow_controls);
-			
-			// //display percerts around player's location
-			this->cave.check_for_percepts(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2]);
 
 			// //1. get input and move player
 			check_confused(get_input(), confused_timer);
@@ -470,5 +423,4 @@ void Game::play_game(int w, int l, int h, bool b){
 	}
 
 	return;
-
 }

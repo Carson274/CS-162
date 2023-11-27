@@ -1,6 +1,7 @@
 #ifndef GOLD_H
 #define GOLD_H 
 
+#include <ncurses.h>
 #include "event.h"
 
 class Gold : public Event {
@@ -19,6 +20,8 @@ class Gold : public Event {
 
         void encounter(bool &);
         void move();
+
+        void display_percept_message(WINDOW *, int);
 };
 
 #endif
