@@ -28,7 +28,7 @@ public:
 
     void check_for_percepts(WINDOW *, int, int, int);
 
-    void print_adventurer(WINDOW *, int, int);
+    void print_adventurer(WINDOW *, int, int, bool);
 
     void print_exit(WINDOW *, int, int);
 

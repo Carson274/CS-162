@@ -21,7 +21,9 @@ Cave::~Cave() {
 		for(int j = 0; j < get_width(); ++j) {
 			for(int k = 0; k < get_height(); ++k) {
 				if(this->rooms[i][j][k].get_event() != NULL) {
-					delete this->rooms[i][j][k].get_event();
+					Event* event = this->rooms[i][j][k].get_event();
+					delete event;
+					this->rooms[i][j][k].set_event(NULL);
 				}
 			}
 		}
@@ -176,22 +178,21 @@ void Cave::check_for_percepts(WINDOW *win, int x, int y, int z) {
 		this->rooms[x][y + 1][z].play_event_percept(win, i);
 		i++;
 	} 
-	if(z > 0 && this->rooms[x][y][z - 1].get_event() != NULL) {
-		this->rooms[x][y][z - 1].play_event_percept(win, i);
-		i++;
-	} 
-	if(z < get_height() - 1 && this->rooms[x][y][z + 1].get_event() != NULL) {
-		this->rooms[x][y][z + 1].play_event_percept(win, i);
-		i++;
-	}
 	return;
 }
 
-void Cave::print_adventurer(WINDOW *win, int midY, int midX) {
+void Cave::print_adventurer(WINDOW *win, int midY, int midX, bool arrow_controls) {
 	noecho();
-	mvwprintw(win, midY - 1, midX, "O");
-	mvwprintw(win, midY, midX - 1, "/|\\");
-	mvwprintw(win, midY + 1, midX - 1, "/ \\");
+	if(arrow_controls){
+		mvwprintw(win, midY - 1, midX, "O_|\\");
+		mvwprintw(win, midY, midX, "|\\| |");
+		mvwprintw(win, midY + 1, midX - 1, "/ \\|/");
+
+	} else {
+		mvwprintw(win, midY - 1, midX, "O");
+		mvwprintw(win, midY, midX - 1, "/|\\");
+		mvwprintw(win, midY + 1, midX - 1, "/ \\");
+	}
 	return;
 }
 
@@ -231,7 +232,7 @@ void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool
 			int midY = getmaxy(cell) / 2;
 			int midX = getmaxx(cell) / 2;
 			if(adventurer_pos[0] == j && adventurer_pos[1] == k && adventurer_pos[2] == i){
-				print_adventurer(cell, midY, midX);
+				print_adventurer(cell, midY, midX, arrow_controls);
 			} else if(starting_pos[0] == j && starting_pos[1] == k && starting_pos[2] == i) {
 				print_exit(cell, midY, midX);
 			} else if(rooms[j][k][i].get_event() == NULL) {

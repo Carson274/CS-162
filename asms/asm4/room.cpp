@@ -55,7 +55,7 @@ void Room::encounter_event(WINDOW *win, bool &b) {
     }
 
     // clear event once it's been triggered
-    this->event = NULL;
+    set_event(NULL);
     wrefresh(win);
     return;
 }
