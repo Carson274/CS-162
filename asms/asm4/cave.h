@@ -28,6 +28,12 @@ public:
 
     void check_for_percepts(WINDOW *, int, int, int);
 
+    void print_adventurer(WINDOW *, int, int);
+
+    void print_exit(WINDOW *, int, int);
+
+    void print_event(WINDOW *, int, int, char);
+
     void print_cave(bool &, bool &, bool &, bool &, int, int *, int *, bool);
 
     void place_adventurer(int, int, int);

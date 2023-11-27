@@ -68,9 +68,6 @@ int main()
 	
 	Game g;
 
-	//get the 4th input --> debug mode or not
-	// g.debug_prompt(debug);
-
 	//Play game
 	g.play_game(wid, len, hig, debug);
 

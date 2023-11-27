@@ -16,8 +16,6 @@ Game::Game(){
 
 Game::~Game(){
 	//Game destructor
-	//Your code here:
-
 }
 
 void Game::set_debug_view(bool d){
@@ -35,9 +33,27 @@ bool Game::get_wumpus_alive() const{
 }
 
 void Game::debug_prompt(bool& d){
+	noecho();
 	//get the debug mode or not
-	cout << "Enter debug mode (1-yes, 0-no): " << endl;
-	cin >> d;
+	WINDOW *win = newwin(47, 170, 3, 6);
+	mvwprintw(win, 30, 70, "Enter debug mode (1-yes, 0-no): ");
+	box(win, 0, 0);
+	wrefresh(win);
+	char c = getch();
+	while(c != '1' && c != '0') {
+		mvwprintw(win, 30, 70, "Error! You must enter '1' or '0'");
+		mvwprintw(win, 32, 70, "Enter debug mode (1-yes, 0-no): ");
+		refresh();
+		wrefresh(win);
+		noecho();
+		c = getch();
+	}
+	if(c == '1') {
+		d = true;
+	} else {
+		d = false;
+	}
+	delwin(win);
 	return;
 }
 
@@ -63,7 +79,7 @@ void Game::set_up(int l, int w, int h, bool b){
 
 	// reset wumpus and adventurer, if applicable
 	set_wumpus_alive(true);
-	this->adventurer.set_num_lives(3);
+	this->adventurer.set_num_lives(1);
 	this->adventurer.set_num_arrows(3);
 	this->adventurer.set_gold(false);
 
@@ -390,6 +406,8 @@ void Game::play_game(int w, int l, int h, bool b){
 	bool play_again = true;
 
 	while(play_again == true) {
+
+		debug_prompt(b);
 
 		set_up(w, l, h, b);
 

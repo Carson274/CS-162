@@ -16,7 +16,15 @@ Cave::Cave() {
 
 Cave::~Cave() {
 	// dont forget to delete the events
-	
+	for(int i = 0; i < get_length(); ++i) {
+		for(int j = 0; j < get_width(); ++j) {
+			for(int k = 0; k < get_height(); ++k) {
+				if(this->rooms[i][j][k].get_event() != NULL) {
+					delete this->rooms[i][j][k].get_event();
+				}
+			}
+		}
+	}
 }
 
 void Cave::setup_cave(){
@@ -178,6 +186,36 @@ void Cave::check_for_percepts(WINDOW *win, int x, int y, int z) {
 	return;
 }
 
+void Cave::print_adventurer(WINDOW *win, int midY, int midX) {
+	noecho();
+	mvwprintw(win, midY - 1, midX, "O");
+	mvwprintw(win, midY, midX - 1, "/|\\");
+	mvwprintw(win, midY + 1, midX - 1, "/ \\");
+	return;
+}
+
+void Cave::print_exit(WINDOW *win, int midY, int midX) {
+	noecho();
+	WINDOW *small_win = derwin(win, 3, 9, midY - 1, midX - 4);
+	box(small_win, 0, 0);
+	start_color();
+	init_pair(1, COLOR_RED, COLOR_BLACK);
+
+	// set the EXIT to red
+	wattron(small_win, COLOR_PAIR(1));
+	mvwprintw(small_win, 1, 2, "EXIT");
+	wattroff(small_win, COLOR_PAIR(1));
+	refresh();
+	delwin(small_win);
+	return;
+}
+
+void Cave::print_event(WINDOW *win, int midY, int midX, char icon) {
+	noecho();
+	mvwprintw(win, midY, midX, "%c", icon);
+	return;
+}
+
 void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode) {
 	noecho();
 	WINDOW *win = newwin(47, 170, 3, 6);
@@ -192,13 +230,13 @@ void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool
 			int midY = getmaxy(cell) / 2;
 			int midX = getmaxx(cell) / 2;
 			if(adventurer_pos[0] == j && adventurer_pos[1] == k && adventurer_pos[2] == i){
-				mvwprintw(cell, midY, midX, "*");
+				print_adventurer(cell, midY, midX);
 			} else if(starting_pos[0] == j && starting_pos[1] == k && starting_pos[2] == i) {
-				mvwprintw(cell, midY, midX, "X");
+				print_exit(cell, midY, midX);
 			} else if(rooms[j][k][i].get_event() == NULL) {
 				mvwprintw(cell, midY, midX, " ");
 			} else if(debug_mode) {
-				mvwprintw(cell, midY, midX, "%c", this->rooms[j][k][i].get_event_icon());
+				print_event(cell, midY, midX, this->rooms[j][k][i].get_event_icon());
 			} else {
 				mvwprintw(cell, midY, midX, " ");
 			}
