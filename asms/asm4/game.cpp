@@ -105,12 +105,12 @@ void Game::set_up(int l, int w, int h, bool b){
 }
 
 //Note: you need to modify this function
-void Game::display_game(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, bool &armor){
+void Game::display_game(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, bool &armor, bool &teleport){
 	cout << endl << endl;
 	
 	// cout << "Arrows remaining: " << this->adventurer.get_num_arrows() << endl;
 
-	this->cave.print_cave(arrow_controls, gold, player_alive, confused, this->adventurer.get_num_lives(), this->adventurer.get_position(), this->starting_position, this->get_debug_view(), armor);
+	this->cave.print_cave(arrow_controls, gold, player_alive, confused, this->adventurer.get_num_lives(), this->adventurer.get_position(), this->starting_position, this->get_debug_view(), armor, teleport);
 }
 
 bool Game::check_win() {
@@ -187,14 +187,10 @@ char Game::get_dir(){
 	//get direction of arrow:
 	char dir;
 
-	bool arrow_controls = true;
-	bool gold = false;
-	bool player_alive = true;
-	bool confused = false;
-	bool armor = false;
+	bool arrow_controls = true, gold = false, player_alive = true, confused = false, armor = false, teleport = false;
 
 	// display game with arrow controls
-	display_game(arrow_controls, gold, player_alive, confused, armor);
+	display_game(arrow_controls, gold, player_alive, confused, armor, teleport);
 	
 	// cout << "Enter direction: " << endl;
 	noecho();
@@ -336,6 +332,19 @@ char Game::get_input(){
 	return c;
 }
 
+void Game::teleport_player() {
+	int *destination = this->cave.find_passage(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2]);
+	
+	this->adventurer.set_position(destination[0], destination[1], destination[2]);
+
+	bool arrow_controls = false, gold = false, player_alive = true, confused = false, armor = false, teleport = false;
+	display_game(arrow_controls, gold, player_alive, confused, armor, teleport);
+
+	delete [] destination;
+	destination = NULL;
+	return;
+}
+
 bool Game::check_loss(bool &player_alive) {
 	if(player_alive == false) {
 		this->adventurer.set_num_lives(this->adventurer.get_num_lives() - 1);
@@ -415,17 +424,23 @@ void Game::play_game(int w, int l, int h, bool b){
 
 		set_up(w, l, h, b);
 
-		bool gold = false, player_alive = true, confused = false, arrow_controls = false, armor = false, loss = false;
+		bool gold = false, player_alive = true, confused = false, arrow_controls = false, armor = false, loss = false, teleport = false;
 		int confused_timer = 0;
 
 		do {
 			// print caves
-			display_game(arrow_controls, gold, player_alive, confused, armor);
+			display_game(arrow_controls, gold, player_alive, confused, armor, teleport);
 
 			// check if the player is confused
 			if(confused) {
 				confused_timer = 5;
 				confused = false;
+			}
+
+			// check if player has been teleported
+			if(teleport) {
+				teleport = false;
+				teleport_player();
 			}
 
 			// get input and move player (if player is alive)

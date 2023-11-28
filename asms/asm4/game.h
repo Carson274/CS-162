@@ -38,7 +38,7 @@ public:
 
 	void set_up(int, int, int, bool);
 
-	void display_game(bool &, bool &, bool &, bool &, bool &);
+	void display_game(bool &, bool &, bool &, bool &, bool &, bool &);
 
 	bool check_win();
 
@@ -57,6 +57,8 @@ public:
 	void check_confused(char, int&);
 
 	char get_input();
+
+	void teleport_player();
 
 	bool check_loss(bool &);
 

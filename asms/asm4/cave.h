@@ -20,6 +20,8 @@ public:
 
     void setup_cave();
 
+    int* find_passage(int, int, int);
+
     void display_level(WINDOW *, int);
 
     void display_health(WINDOW *, int);
@@ -34,7 +36,7 @@ public:
 
     void print_event(WINDOW *, int, int, char);
 
-    void print_cave(bool &, bool &, bool &, bool &, int, int *, int *, bool, bool&);
+    void print_cave(bool &, bool &, bool &, bool &, int, int *, int *, bool, bool&, bool&);
 
     void place_adventurer(int, int, int);
 
@@ -42,7 +44,7 @@ public:
 
     void replace_wumpus();
 
-    void check_for_events(WINDOW *, int, int, int, bool&, bool&, bool&, bool&);
+    void check_for_events(WINDOW *, int, int, int, bool&, bool&, bool&, bool&, bool&);
 
     bool arrow_path(int, int, int, char);
 

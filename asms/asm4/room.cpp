@@ -55,7 +55,9 @@ void Room::encounter_event(WINDOW *win, bool &b) {
     }
 
     // clear event once it's been triggered
-    set_event(NULL);
+    if(this->event->get_icon() != 'P') {
+        set_event(NULL);
+    }
     wrefresh(win);
     return;
 }

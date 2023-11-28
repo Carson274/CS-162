@@ -6,6 +6,7 @@
 #include "bats.h"
 #include "wumpus.h"
 #include "armor.h"
+#include "passage.h"
 
 using namespace std;
 
@@ -79,6 +80,26 @@ int Cave::get_width() const {
 }
 int Cave::get_height() const {
 	return this->height;
+}
+
+int* Cave::find_passage(int x, int y, int z) {
+	int *destination = new int[3];
+	for(int i = 0; i < get_length(); ++i) {
+		for(int j = 0; j < get_width(); ++j) {
+			if(this->rooms[i][j][z].get_event() != NULL) {
+				if(this->rooms[i][j][z].get_event_icon() == 'P' && this->rooms[i][j][z].get_event_position()[0] != x && this->rooms[i][j][z].get_event_position()[1] != y) {
+					destination[0] = i;
+					destination[1] = j;
+					destination[2] = z;
+					return destination;
+				}
+			}
+		}
+	}
+	destination[0] = 0;
+	destination[1] = 0;
+	destination[2] = z;
+	return destination;
 }
 
 void Cave::display_level(WINDOW *win, int level){
@@ -218,7 +239,7 @@ void Cave::print_event(WINDOW *win, int midY, int midX, char icon) {
 	return;
 }
 
-void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode, bool &armor) {
+void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode, bool &armor, bool &teleport) {
 	noecho();
 	WINDOW *win = newwin(47, 170, 3, 6);
 	box(win, 0, 0);
@@ -246,7 +267,7 @@ void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool
 		}
 	}
 	//display percerts around player's location
-	check_for_events(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2], gold, player_alive, confused, armor);
+	check_for_events(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2], gold, player_alive, confused, armor, teleport);
 	check_for_percepts(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2]);
 	refresh();
 	wrefresh(win);
@@ -278,7 +299,7 @@ void Cave::place_events() {
 		}
 	}
 	for(int i = 0; i < 3; ++i) {
-		for(int j = 0; j < 4; ++j) {
+		for(int j = 0; j < 6; ++j) {
 			do {
 				row_idx = rand() % get_length();
 				col_idx = rand() % get_width();
@@ -289,6 +310,8 @@ void Cave::place_events() {
 				this->rooms[row_idx][col_idx][hei_idx].set_event(new Stalactites());
 			} else if(j == 2 || j == 3) {
 				this->rooms[row_idx][col_idx][hei_idx].set_event(new Bats());
+			} else if(j == 4 || j == 5) {
+				this->rooms[row_idx][col_idx][hei_idx].set_event(new Passage());
 			}
 		}
 	}
@@ -319,7 +342,7 @@ void Cave::replace_wumpus() {
 
 }
 
-void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &player_alive, bool& confused, bool&armor) {
+void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &player_alive, bool &confused, bool &armor, bool &teleport) {
 	// check for event at player's location
 	if(this->rooms[x][y][z].get_event() != NULL) {
 		if(this->rooms[x][y][z].get_event_icon() == 'G') {
@@ -330,6 +353,8 @@ void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &
 			this->rooms[x][y][z].encounter_event(win, confused);
 		} else if(this->rooms[x][y][z].get_event_icon() == 'A') {
 			this->rooms[x][y][z].encounter_event(win, armor);
+		} else if(this->rooms[x][y][z].get_event_icon() == 'P') {
+			this->rooms[x][y][z].encounter_event(win, teleport);
 		}
 	}
 	return;
