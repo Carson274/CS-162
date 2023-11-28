@@ -7,6 +7,7 @@
 #include "wumpus.h"
 #include "armor.h"
 #include "passage.h"
+#include "ladder.h"
 
 using namespace std;
 
@@ -239,7 +240,7 @@ void Cave::print_event(WINDOW *win, int midY, int midX, char icon) {
 	return;
 }
 
-void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode, bool &armor, bool &teleport) {
+void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode, bool &armor, bool &teleport, bool &ladder) {
 	noecho();
 	WINDOW *win = newwin(47, 170, 3, 6);
 	box(win, 0, 0);
@@ -267,7 +268,7 @@ void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool
 		}
 	}
 	//display percerts around player's location
-	check_for_events(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2], gold, player_alive, confused, armor, teleport);
+	check_for_events(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2], gold, player_alive, confused, armor, teleport, ladder);
 	check_for_percepts(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2]);
 	refresh();
 	wrefresh(win);
@@ -283,6 +284,8 @@ void Cave::place_events() {
 	// place the events in the cave
 	// for each room, 
 	int row_idx = -1, col_idx = -1, hei_idx = -1;
+
+	// place single events
 	for(int i = 0; i < 3; ++i){
 		do {
 			row_idx = rand() % get_length();
@@ -298,6 +301,20 @@ void Cave::place_events() {
 			this->rooms[row_idx][col_idx][hei_idx].set_event(new Armor());
 		}
 	}
+
+	// place ladders
+	for(int i = 0; i < get_height() - 1; ++i) {
+		do {
+			row_idx = rand() % get_length();
+			col_idx = rand() % get_width();
+			hei_idx = i;
+		} while(this->rooms[row_idx][col_idx][hei_idx].get_event() != NULL || this->rooms[row_idx][col_idx][hei_idx + 1].get_event() != NULL ||  this->rooms[row_idx][col_idx][hei_idx].get_has_adventurer() == true);
+
+		this->rooms[row_idx][col_idx][hei_idx].set_event(new Ladder());
+		this->rooms[row_idx][col_idx][hei_idx + 1].set_event(new Ladder());
+	}
+
+	// place paired events
 	for(int i = 0; i < 3; ++i) {
 		for(int j = 0; j < 6; ++j) {
 			do {
@@ -342,7 +359,7 @@ void Cave::replace_wumpus() {
 
 }
 
-void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &player_alive, bool &confused, bool &armor, bool &teleport) {
+void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &player_alive, bool &confused, bool &armor, bool &teleport, bool &ladder) {
 	// check for event at player's location
 	if(this->rooms[x][y][z].get_event() != NULL) {
 		if(this->rooms[x][y][z].get_event_icon() == 'G') {
@@ -355,6 +372,8 @@ void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &
 			this->rooms[x][y][z].encounter_event(win, armor);
 		} else if(this->rooms[x][y][z].get_event_icon() == 'P') {
 			this->rooms[x][y][z].encounter_event(win, teleport);
+		} else if(this->rooms[x][y][z].get_event_icon() == 'L') {
+			this->rooms[x][y][z].encounter_event(win, ladder);
 		}
 	}
 	return;

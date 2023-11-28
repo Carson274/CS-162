@@ -50,6 +50,6 @@ void Bats::display_percept_message(WINDOW *win, int i) {
 void Bats::display_encounter_message(WINDOW *win) {
     noecho();
     mvwprintw(win, 24, 100, "You have encountered the Bats!");
-    mvwprintw(win, 24, 100, "You are you confused for the next 5 turns!");
+    mvwprintw(win, 25, 100, "You are you confused for the next 5 turns!");
     wrefresh(win);
 }

@@ -9,6 +9,7 @@
 #include "bats.h"
 #include "stalactites.h"
 #include "armor.h"
+#include "ladder.h"
 
 using namespace std;
 
