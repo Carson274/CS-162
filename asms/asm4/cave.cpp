@@ -233,7 +233,7 @@ void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool
 			int midX = getmaxx(cell) / 2;
 			if(adventurer_pos[0] == j && adventurer_pos[1] == k && adventurer_pos[2] == i){
 				print_adventurer(cell, midY, midX, arrow_controls);
-			} else if(starting_pos[0] == j && starting_pos[1] == k && starting_pos[2] == i) {
+			} else if(debug_mode && (starting_pos[0] == j && starting_pos[1] == k && starting_pos[2] == i)) {
 				print_exit(cell, midY, midX);
 			} else if(rooms[j][k][i].get_event() == NULL) {
 				mvwprintw(cell, midY, midX, " ");
@@ -370,7 +370,7 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 	}
 	else if(direction == 's') {
 		for(int x = 0; x < 4; ++x){
-			if(current_x + 1 > get_length() - 1 || x == 3) {
+			if(current_x + 1 > get_width() - 1 || x == 3) {
 				cout << "You missed!" << endl;
 				break;
 			} 
@@ -386,7 +386,7 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 	}
 	else if(direction == 'd') {
 		for(int y = 0; y < 4; ++y){
-			if(current_y + 1 > get_height() - 1 || y == 3) {
+			if(current_y + 1 > get_length() - 1 || y == 3) {
 				cout << "You missed!" << endl;
 				break;
 			} 

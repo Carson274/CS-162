@@ -36,13 +36,16 @@ void Game::debug_prompt(bool& d){
 	noecho();
 	//get the debug mode or not
 	WINDOW *win = newwin(47, 170, 3, 6);
-	mvwprintw(win, 30, 70, "Enter debug mode (1-yes, 0-no): ");
+	mvwprintw(win, 24, 65, "Enter debug mode (1-yes, 0-no): ");
 	box(win, 0, 0);
 	wrefresh(win);
 	char c = getch();
+
+	mvwprintw(win, 24, 65, "                                  ");
+
 	while(c != '1' && c != '0') {
-		mvwprintw(win, 30, 70, "Error! You must enter '1' or '0'");
-		mvwprintw(win, 32, 70, "Enter debug mode (1-yes, 0-no): ");
+		mvwprintw(win, 23, 65, "Error! You must enter '1' or '0'");
+		mvwprintw(win, 25, 65, "Enter debug mode (1-yes, 0-no): ");
 		refresh();
 		wrefresh(win);
 		noecho();
@@ -412,30 +415,34 @@ void Game::play_game(int w, int l, int h, bool b){
 
 		set_up(w, l, h, b);
 
-		bool gold = false, player_alive = true, confused = false, arrow_controls = false, armor = false;;
+		bool gold = false, player_alive = true, confused = false, arrow_controls = false, armor = false, loss = false;
 		int confused_timer = 0;
 
-		while (check_win() == false && check_loss(player_alive) == false){
+		do {
 			// print caves
 			display_game(arrow_controls, gold, player_alive, confused, armor);
 
-			// //1. get input and move player
-			check_confused(get_input(), confused_timer);
-
-			// //4. if the player has the gold, add it
-			this->adventurer.set_gold(gold);
-
-			// //5. check if the player is confused
+			// check if the player is confused
 			if(confused) {
 				confused_timer = 5;
 				confused = false;
 			}
+
+			// get input and move player (if player is alive)
+			loss = check_loss(player_alive);
+			if(!loss) {
+				check_confused(get_input(), confused_timer);
+			}
+
+			// if the player has the gold, add it
+			this->adventurer.set_gold(gold);
+
 			// check if player has armor
 			if(armor) {
 				this->adventurer.set_num_lives(3);
 				armor = false;
 			}
-		}
+		} while(check_win() == false && !loss);
 		if(this->adventurer.get_num_lives() == 0) {
 			game_loss(play_again);
 		} else {
