@@ -15,7 +15,7 @@ Game::Game(){
 }
 
 Game::~Game(){
-	//Game destructor
+	// game destructor
 }
 
 void Game::set_debug_view(bool d){
@@ -43,6 +43,7 @@ void Game::debug_prompt(bool& d){
 
 	mvwprintw(win, 24, 65, "                                  ");
 
+	// error checking
 	while(c != '1' && c != '0') {
 		mvwprintw(win, 23, 65, "Error! You must enter '1' or '0'");
 		mvwprintw(win, 25, 65, "Enter debug mode (1-yes, 0-no): ");
@@ -68,6 +69,8 @@ void Game::set_starting_position(const int x, const int y, const int z){
 }
 
 void Game::randomize_starting_position(){
+
+	// randomize starting position
 	int x, y, z;
 	x = rand() % this->cave.get_length();
 	y = rand() % this->cave.get_width();
@@ -284,12 +287,12 @@ void Game::move(char c) {
 		case 'd':
 			Game::move_right();
 			break;
-		case 'u':
-			Game::move_up_a_level();
-			break;
-		case 'j':
-			Game::move_down_a_level();
-			break;
+		// case 'u':
+		// 	Game::move_up_a_level();
+		// 	break;
+		// case 'j':
+		// 	Game::move_down_a_level();
+		// 	break;
 	}
 	return;
 }
@@ -343,7 +346,6 @@ void Game::climb_ladder() {
 		move_down_a_level();
 	} else {
 		move_up_a_level();
-	
 	}
 
 	bool arrow_controls = false, gold = false, player_alive = true, confused = false, armor = false, teleport = false, ladder = false;
@@ -355,16 +357,11 @@ void Game::teleport_player() {
 	int *destination_1 = this->cave.find_passage(first, this->adventurer.get_position()[2]);
 	first = false;
 	int *destination_2 = this->cave.find_passage(first, this->adventurer.get_position()[2]);
-	cout << "Adventurer position: " << this->adventurer.get_position()[0] << ", " << this->adventurer.get_position()[1] << ", " << this->adventurer.get_position()[2] << endl;
-	cout << "Destination 1: " << destination_1[0] << ", " << destination_1[1] << ", " << destination_1[2] << endl;
-	cout << "Destination 2: " << destination_2[0] << ", " << destination_2[1] << ", " << destination_2[2] << endl;
 	
 	// if the player is on the first passage, teleport them to the second
 	if(this->adventurer.get_position()[0] == destination_1[0] && this->adventurer.get_position()[1] == destination_1[1] && this->adventurer.get_position()[2] == destination_1[2]) {
 		this->adventurer.set_position(destination_2[0], destination_2[1], destination_2[2]);
-		cout << "BOTTOM ONE" << endl;
 	} else {
-		cout << "TOP ONE" << endl;
 		this->adventurer.set_position(destination_1[0], destination_1[1], destination_1[2]);
 	}
 

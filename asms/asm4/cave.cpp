@@ -86,6 +86,7 @@ int Cave::get_height() const {
 int* Cave::find_passage(bool first, int z) {
 	int *destination = new int[3];
 
+	// iterate forwards
 	if(first) {
 		for(int i = 0; i < get_length(); ++i) {
 			for(int j = 0; j < get_width(); ++j) {
@@ -150,6 +151,8 @@ void Cave::display_level(WINDOW *win, int level){
 
 void Cave::display_health(WINDOW *win, int num_lives) {
 	noecho();
+
+	// display the health
 	if(num_lives == 3) {
 		mvwprintw(win, 12, 94, "  _     _____     _______ ____        _____   _______ ");
 		mvwprintw(win, 13, 94, " | |   |_ _\\ \\   / / ____/ ___|   _  |___ /  / /___ / ");
@@ -175,14 +178,16 @@ void Cave::display_instructions(bool &arrow_controls, WINDOW *win, int level, in
 	noecho();
 	display_level(win, level);
 	display_health(win, num_lives);
+
+	// display the controls
 	WINDOW *controls = derwin(win, 12, 40, 34, 128);
 	box(controls, 0, 0);
 	if(arrow_controls == false) {
 		mvwprintw(win, 35, 130, "          -Player Controls-");
 		mvwprintw(win, 37, 130, "        w               ^");
 		mvwprintw(win, 38, 130, "      a s d           < v >");
-		mvwprintw(win, 40, 130, "        u           up a level");
-		mvwprintw(win, 41, 130, "        j          down a level");
+		// mvwprintw(win, 40, 130, "        u           up a level");
+		// mvwprintw(win, 41, 130, "        j          down a level");
 		mvwprintw(win, 43, 130, "        f           fire arrow");
 	} else {
 		mvwprintw(win, 35, 130, "           -Fire an Arrow-");
@@ -233,6 +238,8 @@ void Cave::print_adventurer(WINDOW *win, int midY, int midX, bool arrow_controls
 
 void Cave::print_exit(WINDOW *win, int midY, int midX) {
 	noecho();
+
+	// create a small window for the exit
 	WINDOW *small_win = derwin(win, 3, 9, midY - 1, midX - 4);
 	box(small_win, 0, 0);
 	start_color();
@@ -258,7 +265,7 @@ void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool
 	WINDOW *win = newwin(47, 170, 3, 6);
 	box(win, 0, 0);
 	// print the cave so far
-	int i = adventurer_pos[2]; // Current level of the adventurer
+	int i = adventurer_pos[2]; // current level of the adventurer
 	display_instructions(arrow_controls, win, i + 1, adventurer_lives);
 	for(int j = 0; j < get_length(); ++j) {
 		for(int k = 0; k < get_width(); ++k) {
@@ -280,7 +287,7 @@ void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool
 			delwin(cell); // delete the cell window
 		}
 	}
-	//display percerts around player's location
+	// display percerts around player's location
 	check_for_events(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2], gold, player_alive, confused, armor, teleport, ladder);
 	check_for_percepts(win, adventurer_pos[0], adventurer_pos[1], adventurer_pos[2]);
 	refresh();
@@ -354,7 +361,7 @@ void Cave::replace_wumpus() {
 		row_idx = rand() % get_length();
 		col_idx = rand() % get_width();
 		hei_idx = rand() % get_height();
-	} while(this->rooms[row_idx][col_idx][hei_idx].get_event() != NULL || this->rooms[row_idx][col_idx][hei_idx].get_has_adventurer() == true);
+	} while(this->rooms[row_idx][col_idx][hei_idx].get_event() != NULL);
 
 	// get the wumpus
 	for(int i = 0; i < get_length(); ++i) {
@@ -407,11 +414,11 @@ void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &
 	return;
 }
 
+// unsure how to make this less than 15 lines and more efficient
 bool Cave::arrow_path(int current_x, int current_y, int current_z, char direction) {
 	if(direction == 'w') {
 		for(int x = 0; x < 4; ++x){
 			if(current_x - 1 < 0 || x == 3) {
-				cout << "You missed!" << endl;
 				break;
 			} 
 			else {
@@ -427,7 +434,6 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 	else if(direction == 'a') {
 		for(int y = 0; y < 4; ++y){
 			if(current_y - 1 < 0 || y == 3) {
-				cout << "You missed!" << endl;
 				break;
 			} 
 			else {
@@ -443,7 +449,6 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 	else if(direction == 's') {
 		for(int x = 0; x < 4; ++x){
 			if(current_x + 1 > get_width() - 1 || x == 3) {
-				cout << "You missed!" << endl;
 				break;
 			} 
 			else {
@@ -459,7 +464,6 @@ bool Cave::arrow_path(int current_x, int current_y, int current_z, char directio
 	else if(direction == 'd') {
 		for(int y = 0; y < 4; ++y){
 			if(current_y + 1 > get_length() - 1 || y == 3) {
-				cout << "You missed!" << endl;
 				break;
 			} 
 			else {

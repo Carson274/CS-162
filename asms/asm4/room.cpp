@@ -44,8 +44,12 @@ bool Room::get_has_adventurer() const {
 
 void Room::encounter_event(WINDOW *win, bool &b) {
     noecho();
+
+    // display encounter message
     this->event->display_encounter_message(win);
     this->event->encounter(b);
+
+    // display result message if stalactite event
     if(this->event->get_icon() == 'S') {
         if(b) {
             mvwprintw(win, 25, 100, "You've managed to dodge a falling stalactite!");

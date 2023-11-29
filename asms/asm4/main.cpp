@@ -1,3 +1,18 @@
+/***********************************************************************
+ * Program: Hunt the Wumpus
+ * Author: Carson Secrest
+ * Date: 11/29/23
+ * Description: This program is an adventure game where the player
+ *              navigates through a cave system to hunt down the Wumpus.
+ *              The player can move to adjacent rooms, shoot arrows to kill
+ *              the Wumpus, and avoid hazards such as stalactites and bats.
+ * 			    The player wins if they either kill the Wumpus or brind the
+ * 				gold to the exit, and loses if they get killed.
+ * Input: user input for movement, shooting arrows, entering debug mode,
+ *			   and replaying/exiting the game
+ * Output: game messages and prompts displayed to the screen
+***********************************************************************/
+
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -13,6 +28,7 @@ int main()
 	cbreak();
 	noecho();
 
+	// display title
 	WINDOW *start_win = newwin(47, 170, 3, 6);
 	box(start_win, 0, 0);
 	refresh();
@@ -60,7 +76,7 @@ int main()
 	clear();
 	refresh();
 
-	//set the random seed
+	// set the random seed
 	srand(time(NULL));
 	
 	int wid = 5, len = 5, hig = 3;
@@ -68,7 +84,7 @@ int main()
 	
 	Game g;
 
-	//Play game
+	// play game
 	g.play_game(wid, len, hig, debug);
 
 	move(0,0);
