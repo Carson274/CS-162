@@ -4,25 +4,83 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 
+    // initscr();
+    // cbreak();
+    // noecho();
+    //     initscr();          // Start curses mode
+    // cbreak();           // Disable line buffering
+    // noecho();           // Don't echo while we do getch
+
+    // int height, width, start_y, start_x;
+    // height = 20;        // Set the height of the window
+    // width = 50;         // Set the width of the window
+    // start_y = start_x = 0;
+
+    // WINDOW *win = newwin(height, width, start_y, start_x);
+    // refresh();
+
+    // // Dimensions for each box
+    // int box_width = width / 5;
+    // int box_height = height / 5;
+
+    // // Drawing the grid
+    // for (int y = 0; y <= 5; y++) {
+    //     for (int x = 0; x <= 5; x++) {
+    //         // Draw vertical lines
+    //         if (x < 5) {
+    //             mvwvline(win, 0, x * box_width, '|', height);
+    //         }
+    //         // Draw horizontal lines
+    //         if (y < 5) {
+    //             mvwhline(win, y * box_height, 0, '-', box_width * 5);
+    //         }
+    //     }
+    // }
+
+    // // Refresh the window to show the grid
+    // wrefresh(win);
+
+    // getch();            // Wait for user input
+    // endwin();           // End curses mode
+
+    // return 0;
+
+
+
+
+
+
     initscr();
     cbreak();
     noecho();
 
+    // Create a window for the start message
+    WINDOW *start_win = newwin(47, 89, 3, 6); // Full screen window
+    box(start_win, 0, 0);
+    refresh(); // Refresh the screen
+
+    // Print the message in the middle of the window and wait for user input
+    mvwprintw(start_win, 20, 20, "Press any character to start");
+    wrefresh(start_win); // Refresh the window
+    getch(); // Wait for user input
+
+    // Delete the start window
+    delwin(start_win);
 
     int x = 4, y = 3; // Initial position of the asterisk
 
     // Create a window for the board
-    WINDOW *win = newwin(40, 60, 3, 6);
-    box (win, 0, 0); // Draw a box around the window
+    WINDOW *win = newwin(47, 89, 3, 6);
+    box(win, 0, 0); // Draw a box around the window
 
     while (true) {
-        wclear(win); // Clear the window
+        
 
         // Draw the board
         for (int i = 0; i < 5; ++i) {
             for (int j = 0; j < 5; ++j) {
                 // Draw a box for each cell
-                WINDOW *cell = derwin(win, 7, 12, i * 6, j * 11);
+                WINDOW *cell = derwin(win, 9, 17, i * 9 + 1, j * 17 + 2);
                 box(cell, 0, 0);
                 if (i == y && j == x) {
                     mvwprintw(cell, 1, 1, "*");
@@ -31,6 +89,7 @@ int main(int argc, char ** argv) {
                 }
                 delwin(cell); // Delete the cell window
             }
+            
         }
 
         wrefresh(win); // Refresh the window
@@ -121,5 +180,5 @@ int main(int argc, char ** argv) {
     // // deallocates memory and ends ncurses
     // endwin();
 
-    return 0;
+    // return 0;
 }
