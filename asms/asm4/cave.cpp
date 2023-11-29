@@ -369,7 +369,22 @@ void Cave::replace_wumpus() {
 			}
 		}
 	}
+}
 
+bool Cave::find_ladder_below(int x, int y, int z) {
+	bool ladder = false;
+	// check if there is a ladder below the player
+	if(this->rooms[x][y][z - 1].get_event() != NULL) {
+		if(this->rooms[x][y][z].get_event_icon() == 'L') {
+			ladder = true;
+			return ladder;
+		}
+		else {
+			ladder = false;
+			return ladder;
+		}
+	}
+	return ladder;
 }
 
 void Cave::check_for_events(WINDOW *win, int x, int y, int z, bool &gold, bool &player_alive, bool &confused, bool &armor, bool &teleport, bool &ladder) {

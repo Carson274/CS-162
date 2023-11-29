@@ -333,12 +333,17 @@ char Game::get_input(){
 }
 
 void Game::climb_ladder() {
+
+	// if at the top, move down; if at the bottom, move up; else if ladder below, move down; else move up
 	if(this->adventurer.get_position()[2] == this->cave.get_height() - 1) {
 		move_down_a_level();
 	} else if(this->adventurer.get_position()[2] == 0) {
 		move_up_a_level();
+	} else if(this->cave.find_ladder_below(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2])) {
+		move_down_a_level();
 	} else {
 		move_up_a_level();
+	
 	}
 
 	bool arrow_controls = false, gold = false, player_alive = true, confused = false, armor = false, teleport = false, ladder = false;

@@ -43,7 +43,7 @@ void Ladder::encounter(bool &b) {
 }
 void Ladder::display_percept_message(WINDOW *win, int i) {
     noecho();
-    mvwprintw(win, 27 + i, 100, "You hear wings flapping.");
+    mvwprintw(win, 27 + i, 100, "You hear creaking.");
     wrefresh(win);
 }
 

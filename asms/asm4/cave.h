@@ -44,6 +44,8 @@ public:
 
     void replace_wumpus();
 
+    bool find_ladder_below(int, int, int);
+
     void check_for_events(WINDOW *, int, int, int, bool &, bool &, bool &, bool &, bool &, bool &);
 
     bool arrow_path(int, int, int, char);
