@@ -20,7 +20,7 @@ public:
 
     void setup_cave();
 
-    int* find_passage(int, int, int);
+    int* find_passage(bool, int);
 
     void display_level(WINDOW *, int);
 

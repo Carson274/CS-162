@@ -83,23 +83,36 @@ int Cave::get_height() const {
 	return this->height;
 }
 
-int* Cave::find_passage(int x, int y, int z) {
+int* Cave::find_passage(bool first, int z) {
 	int *destination = new int[3];
-	for(int i = 0; i < get_length(); ++i) {
-		for(int j = 0; j < get_width(); ++j) {
-			if(this->rooms[i][j][z].get_event() != NULL) {
-				if(this->rooms[i][j][z].get_event_icon() == 'P' && this->rooms[i][j][z].get_event_position()[0] != x && this->rooms[i][j][z].get_event_position()[1] != y) {
-					destination[0] = i;
-					destination[1] = j;
-					destination[2] = z;
-					return destination;
+
+	if(first) {
+		for(int i = 0; i < get_length(); ++i) {
+			for(int j = 0; j < get_width(); ++j) {
+				if(this->rooms[i][j][z].get_event() != NULL) {
+					if(this->rooms[i][j][z].get_event_icon() == 'P') {
+						destination[0] = i;
+						destination[1] = j;
+						destination[2] = z;
+					}
+				}
+			}
+		}
+	} 
+	// iterate backwards
+	else {
+		for(int i = get_length() - 1; i >= 0; --i) {
+			for(int j = get_width() - 1; j >= 0; --j) {
+				if(this->rooms[i][j][z].get_event() != NULL) {
+					if(this->rooms[i][j][z].get_event_icon() == 'P') {
+						destination[0] = i;
+						destination[1] = j;
+						destination[2] = z;
+					}
 				}
 			}
 		}
 	}
-	destination[0] = 0;
-	destination[1] = 0;
-	destination[2] = z;
 	return destination;
 }
 

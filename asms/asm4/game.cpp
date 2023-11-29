@@ -346,15 +346,30 @@ void Game::climb_ladder() {
 }
 
 void Game::teleport_player() {
-	int *destination = this->cave.find_passage(this->adventurer.get_position()[0], this->adventurer.get_position()[1], this->adventurer.get_position()[2]);
+	bool first = true;
+	int *destination_1 = this->cave.find_passage(first, this->adventurer.get_position()[2]);
+	first = false;
+	int *destination_2 = this->cave.find_passage(first, this->adventurer.get_position()[2]);
+	cout << "Adventurer position: " << this->adventurer.get_position()[0] << ", " << this->adventurer.get_position()[1] << ", " << this->adventurer.get_position()[2] << endl;
+	cout << "Destination 1: " << destination_1[0] << ", " << destination_1[1] << ", " << destination_1[2] << endl;
+	cout << "Destination 2: " << destination_2[0] << ", " << destination_2[1] << ", " << destination_2[2] << endl;
 	
-	this->adventurer.set_position(destination[0], destination[1], destination[2]);
+	// if the player is on the first passage, teleport them to the second
+	if(this->adventurer.get_position()[0] == destination_1[0] && this->adventurer.get_position()[1] == destination_1[1] && this->adventurer.get_position()[2] == destination_1[2]) {
+		this->adventurer.set_position(destination_2[0], destination_2[1], destination_2[2]);
+		cout << "BOTTOM ONE" << endl;
+	} else {
+		cout << "TOP ONE" << endl;
+		this->adventurer.set_position(destination_1[0], destination_1[1], destination_1[2]);
+	}
 
 	bool arrow_controls = false, gold = false, player_alive = true, confused = false, armor = false, teleport = false, ladder = false;
 	display_game(arrow_controls, gold, player_alive, confused, armor, teleport, ladder);
 
-	delete [] destination;
-	destination = NULL;
+	delete [] destination_1;
+	delete [] destination_2;
+	destination_1 = NULL;
+	destination_2 = NULL;
 	return;
 }
 
