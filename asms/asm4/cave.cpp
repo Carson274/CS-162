@@ -243,12 +243,12 @@ void Cave::print_exit(WINDOW *win, int midY, int midX) {
 	WINDOW *small_win = derwin(win, 3, 9, midY - 1, midX - 4);
 	box(small_win, 0, 0);
 	start_color();
-	init_pair(1, COLOR_RED, COLOR_BLACK);
+	init_pair(4, COLOR_RED, COLOR_BLACK);
 
 	// set the EXIT to red
-	wattron(small_win, COLOR_PAIR(1));
-	mvwprintw(small_win, 1, 2, "EXIT");
-	wattroff(small_win, COLOR_PAIR(1));
+	wattron(small_win, COLOR_PAIR(4));
+	mvwprintw(small_win, 1, 2, "EXIT!");
+	wattroff(small_win, COLOR_PAIR(4));
 	refresh();
 	delwin(small_win);
 	return;
@@ -256,8 +256,125 @@ void Cave::print_exit(WINDOW *win, int midY, int midX) {
 
 void Cave::print_event(WINDOW *win, int midY, int midX, char icon) {
 	noecho();
-	mvwprintw(win, midY, midX, "%c", icon);
+	start_color();
+	init_color(8, 500, 250, 0);
+	init_pair(1, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(2, 8, COLOR_BLACK);
+	init_pair(3, COLOR_BLUE, COLOR_BLACK);
+	init_pair(5, COLOR_BLACK, COLOR_BLACK);
+	init_pair(6, COLOR_WHITE, COLOR_BLACK);
+
+	if(icon == 'L') {
+		wattron(win, COLOR_PAIR(2));
+		mvwprintw(win, midY-2, midX-4, "|_______|");
+		mvwprintw(win, midY-1, midX-4, "|_______|");
+		mvwprintw(win, midY, midX-4, "|_______|");
+		mvwprintw(win, midY+1, midX-4, "|_______|");
+		mvwprintw(win, midY+2, midX-4, "|       |");
+		wattroff(win, COLOR_PAIR(2));
+	} else if(icon == 'P') {
+		wattron(win, COLOR_PAIR(3));
+		mvwprintw(win, midY-3, midX-4, "  /-^-\\");
+		mvwprintw(win, midY-2, midX-4, " /     \\");
+		mvwprintw(win, midY-1, midX-4, "|  ***  |");
+		mvwprintw(win, midY, midX-4, "|  ***  |");
+		mvwprintw(win, midY+1, midX-4, "|  ***  |");
+		mvwprintw(win, midY+2, midX-4, " \\     /");
+		mvwprintw(win, midY+3, midX-4, "  \\---/");
+		wattroff(win, COLOR_PAIR(3));
+	} else if(icon == 'G') {
+		wattron(win, COLOR_PAIR(1));
+		mvwprintw(win, midY-3, midX-4, "    $");
+		mvwprintw(win, midY-2, midX-4, "  /$$$\\");
+		mvwprintw(win, midY-1, midX-4, " $  $  $");
+		mvwprintw(win, midY, midX-4, "  \\$$$\\");
+		mvwprintw(win, midY+1, midX-4, " $  $  $");
+		mvwprintw(win, midY+2, midX-4, "  \\$$$/");
+		mvwprintw(win, midY+3, midX-4, "    $");
+		wattroff(win, COLOR_PAIR(1));
+	} else if(icon == 'B') {
+		wattron(win, COLOR_PAIR(5));
+		mvwprintw(win, midY-2, midX-7, "___  /\\ /\\  ___");
+		mvwprintw(win, midY-1, midX-7, "\\_ \\/ o o \\/ _/");
+		mvwprintw(win, midY, midX-7, " /_    W    _\\");
+		mvwprintw(win, midY+1, midX-7, "  /_  ___  _\\");
+		mvwprintw(win, midY+2, midX-7, "   /_/   \\_\\");
+		wattroff(win, COLOR_PAIR(5));
+	} else if(icon == 'S') {
+		mvwprintw(win, midY-2, midX-7, "  \\      \\// /");
+		mvwprintw(win, midY-1, midX-7, "   \\ \\/   / /");
+		mvwprintw(win, midY, midX-7, "    \\    / /");
+		mvwprintw(win, midY+1, midX-7, "     \\  /\\/");
+		mvwprintw(win, midY+2, midX-7, "      \\/");
+	} else if(icon == 'W') {
+		wattron(win, COLOR_PAIR(4));
+		mvwprintw(win, midY-2, midX-7, "    _______");
+		mvwprintw(win, midY-1, midX-7, "   /  o o  \\");
+		mvwprintw(win, midY, midX-7, "  |   vvv   |");
+		mvwprintw(win, midY+1, midX-7, "   \\_/   \\_/");
+		mvwprintw(win, midY+2, midX-7, "    /\\   /\\");
+		wattroff(win, COLOR_PAIR(4));
+	} else if(icon == 'A') {
+		wattron(win, COLOR_PAIR(6));
+		mvwprintw(win, midY-3, midX-7, "  _    _    _");
+		mvwprintw(win, midY-2, midX-7, " | \\__/ \\__/ |");
+		mvwprintw(win, midY-1, midX-7, " |   _____   |");
+		mvwprintw(win, midY, midX-7, " |  |     |  |");
+		mvwprintw(win, midY+1, midX-7, "  \\  \\   /  /");
+		mvwprintw(win, midY+2, midX-7, "   \\  \\_/  /");
+		mvwprintw(win, midY+3, midX-7, "    \\_____/");
+		wattroff(win, COLOR_PAIR(6));
+	} else {
+		mvwprintw(win, midY, midX, "%c", icon);
+	}
 	return;
+
+// |\___/\___/|
+// |  ______  |
+// | |      | |
+// \  \    /  /
+//  \  \__/  /
+//   \______/
+
+//    _______
+//   /  o o  \
+//  |   vvv   |
+//   \_/   \_/
+//    /\   /\
+
+// \      \// /
+//  \ \/   / /
+//   \    / /
+//    \  /\/
+//     \/
+
+// ___  /\ /\  ___
+// \_ \/ o o \/ _/
+//  /_    W    _\
+//   /_  ___  _\
+//    /_/   \_\
+
+//  /$$$\\
+// $  $  $
+//  \\$$$\\
+// $  $  $
+// \\  $  /
+//  $$$$$
+
+//   /-^-\
+//  /     \
+// |  ***  |
+// |  ***  |
+// |  ***  |
+//  \     /
+//   \---/
+
+// |_________|
+// |_________|
+// |_________|
+// |_________|
+// |         |
+
 }
 
 void Cave::print_cave(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, int adventurer_lives, int *adventurer_pos, int *starting_pos, bool debug_mode, bool &armor, bool &teleport, bool &ladder) {
