@@ -15,7 +15,6 @@ Game::Game(){
 }
 
 Game::~Game(){
-	// game destructor
 }
 
 void Game::set_debug_view(bool d){
@@ -36,17 +35,22 @@ void Game::debug_prompt(bool& d){
 	noecho();
 	//get the debug mode or not
 	WINDOW *win = newwin(47, 170, 3, 6);
-	mvwprintw(win, 24, 65, "Enter debug mode (1-yes, 0-no): ");
+	mvwprintw(win, 22, 65, "Would you like to enter cheat mode?");
+	mvwprintw(win, 23, 65, "This makes it so you can see all events");
+	mvwprintw(win, 24, 65, "in the cave.");
+	mvwprintw(win, 26, 75, "(1-yes, 0-no)");
 	box(win, 0, 0);
 	wrefresh(win);
 	char c = getch();
+	clear();
+	box(win, 0, 0);
 
 	mvwprintw(win, 24, 65, "                                  ");
 
 	// error checking
 	while(c != '1' && c != '0') {
 		mvwprintw(win, 23, 65, "Error! You must enter '1' or '0'");
-		mvwprintw(win, 25, 65, "Enter debug mode (1-yes, 0-no): ");
+		mvwprintw(win, 26, 65, "Enter cheat mode (1-yes, 0-no): ");
 		refresh();
 		wrefresh(win);
 		noecho();
@@ -107,7 +111,6 @@ void Game::set_up(int l, int w, int h, bool b){
 	this->cave.place_events();
 }
 
-//Note: you need to modify this function
 void Game::display_game(bool &arrow_controls, bool &gold, bool &player_alive, bool &confused, bool &armor, bool &teleport, bool &ladder){
 	cout << endl << endl;
 	
@@ -302,6 +305,24 @@ void Game::check_confused(char c, int &confused_timer) {
 	if(confused_timer == 0) {
 		move(c);
 	}
+	// if the player is at a wall (cannot move in the confused direction), don't lower the confused timer
+	else if((c == 's' && this->adventurer.get_position()[0] == 0) || (c == 'w' && this->adventurer.get_position()[0] == this->cave.get_length() - 1) || (c == 'd' && this->adventurer.get_position()[1] == 0) || (c == 'a' && this->adventurer.get_position()[1] == this->cave.get_width() - 1)) {
+		if(c == 'w') {
+			move('s');
+		} else if(c == 'a') {
+			move('d');
+		} else if(c == 's') {
+			move('w');
+		} else if(c == 'd') {
+			move('a');
+		} else if(c == 'u') {
+			move('j');
+		} else if(c == 'j') {
+			move('u');
+		} else if (c == 'f') {
+			move('v');
+		}
+	}
 	else {
 		if(c == 'w') {
 			move('s');
@@ -323,10 +344,8 @@ void Game::check_confused(char c, int &confused_timer) {
 }
 
 char Game::get_input(){
-	//get action, move direction or firing an arrow
 
-	//Note: error checking is needed!!
-	//Your code here:
+	//get action, move direction or firing an arrow
 	char c;
 	noecho();
 	c = getch();
